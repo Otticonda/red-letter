@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Red Letter</title>
+<meta name="description" content="Words spoken by God and Jesus in the King James Bible, one at a time, written to you. Tell it how you feel and get verses and prayer points. Built by Otti.">
+<meta name="author" content="Otti">
+<meta name="theme-color" content="#fbfaf8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141110" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Red Letter">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Red Letter">
+<meta property="og:description" content="Words spoken by God and Jesus in the King James Bible, one at a time, written to you. Tell it how you feel and get verses and prayer points. Built by Otti.">
+<meta property="og:url" content="https://otticonda.github.io/red-letter/">
+<meta property="og:image" content="https://otticonda.github.io/red-letter/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Red Letter">
+<meta name="twitter:description" content="Words spoken by God and Jesus in the King James Bible, one at a time, written to you. Tell it how you feel and get verses and prayer points. Built by Otti.">
+<meta name="twitter:image" content="https://otticonda.github.io/red-letter/og.png">
+<link rel="preload" href="fonts/bodoni-moda-italic.woff" as="font" type="font/woff" crossorigin>
+<style>
+@font-face { font-family: "Bodoni Moda"; src: url("fonts/bodoni-moda-italic.woff") format("woff"); font-style: italic; font-weight: 400 900; font-display: swap; }
+@font-face { font-family: "Spectral"; src: url("fonts/spectral-regular.woff") format("woff"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Spectral"; src: url("fonts/spectral-italic.woff") format("woff"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Spectral"; src: url("fonts/spectral-medium.woff") format("woff"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Spectral"; src: url("fonts/spectral-semibold.woff") format("woff"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("fonts/archivo.woff") format("woff"); font-weight: 100 900; font-stretch: 62% 125%; font-style: normal; font-display: swap; }
+/* Layout: one screen, one word. A red-letter page addressed to Otti: greeting, his name, the spoken word in huge red, a line written to him, then the verse. Tap Next. "Talk to me" opens a sheet that matches feelings to words. */
+:root {
+  --paper: #fbfaf8;
+  --ink: #1c1715;
+  --ink-2: #6e6460;
+  --rule: #e7e1dd;
+  --red: #b0121b;
+  --wash: #f7e8e6;
+  --on-ink: #fbfaf8;
+  --f-display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --f-text: "Spectral", Georgia, "Times New Roman", serif;
+  --f-ui: "Archivo", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #141110; --ink: #f1ebe7; --ink-2: #a2968f; --rule: #2d2725;
+    --red: #f2554a; --wash: #2b1816; --on-ink: #141110; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #141110; --ink: #f1ebe7; --ink-2: #a2968f; --rule: #2d2725;
+  --red: #f2554a; --wash: #2b1816; --on-ink: #141110; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; overflow: hidden;
+  background: var(--paper); color: var(--ink);
+  font-family: var(--f-text); font-size: 17px; line-height: 1.6;
+}
+.sc { font-size: .78em; letter-spacing: .04em; }
+.label {
+  font-family: var(--f-ui); font-stretch: 78%; font-weight: 650;
+  font-size: .74rem; letter-spacing: .09em; text-transform: uppercase; line-height: 1.3;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+/* ---------- app frame ---------- */
+.app {
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: 100%; max-width: 46rem; margin: 0 auto;
+  display: grid; grid-template-rows: auto 1fr auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.top {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding-block: .9rem .75rem; border-bottom: 1px solid var(--rule);
+}
+.brand { display: grid; gap: .1rem; }
+.mark {
+  margin: 0; font-family: var(--f-display); font-style: italic; font-weight: 600;
+  font-size: 1.3rem; line-height: 1; letter-spacing: -.01em; white-space: nowrap;
+}
+.mark span { color: var(--red); }
+.by { font-size: .82rem; font-style: italic; color: var(--ink-2); line-height: 1.2; }
+.by b { font-family: var(--f-display); font-weight: 600; color: var(--ink); }
+.count {
+  font-family: var(--f-ui); font-stretch: 85%; font-weight: 650; font-size: .9rem;
+  font-variant-numeric: tabular-nums; color: var(--ink-2); white-space: nowrap;
+}
+.count b { color: var(--ink); font-weight: 700; }
+
+/* ---------- the stage: one word ---------- */
+.stage {
+  overflow-y: auto; overscroll-behavior: contain; min-height: 0;
+  display: flex; flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+}
+.page { margin-block: auto; padding-block: 1.5rem 2rem; display: grid; gap: 1.1rem; }
+.greet { margin: 0; font-style: italic; color: var(--ink-2); font-size: 1.02rem; }
+.eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .7rem; color: var(--ink-2); }
+.eyebrow .th { color: var(--red); }
+.mode {
+  display: inline-flex; align-items: center; gap: .45rem;
+  border: 1px solid var(--red); background: var(--wash); color: var(--red);
+  border-radius: 999px; padding: .2rem .25rem .2rem .7rem;
+}
+.mode button {
+  appearance: none; border: 0; background: var(--red); color: var(--paper); cursor: pointer;
+  font-family: var(--f-ui); font-stretch: 78%; font-weight: 650; font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
+  border-radius: 999px; padding: .3rem .6rem; min-height: 28px;
+}
+.speak { display: grid; gap: .2rem; }
+.addr {
+  margin: 0; font-family: var(--f-display); font-style: italic; font-weight: 500;
+  font-size: clamp(1.45rem, 5.4vw, 2rem); line-height: 1; color: var(--ink);
+}
+.headline {
+  margin: 0; color: var(--red);
+  font-family: var(--f-display); font-style: italic; font-weight: 500; font-optical-sizing: auto;
+  line-height: .98; letter-spacing: -.015em; text-wrap: balance;
+  font-size: clamp(3.4rem, 15vw, 6.6rem);
+}
+.headline[data-len="mid"] { font-size: clamp(2.7rem, 11.2vw, 5rem); }
+.headline[data-len="long"] { font-size: clamp(2.1rem, 8.2vw, 3.7rem); line-height: 1.04; }
+.headline .sc { font-size: .8em; }
+.foryou {
+  margin: 0; font-size: clamp(1.18rem, 4.4vw, 1.4rem); line-height: 1.45; font-weight: 500;
+  max-width: 34rem; text-wrap: pretty;
+}
+.verse { display: grid; gap: .45rem; padding-top: .9rem; border-top: 1px solid var(--rule); max-width: 38rem; }
+.passage { margin: 0; font-size: 1.02rem; line-height: 1.62; }
+.sp { color: var(--red); }
+.sp b { font-weight: 600; }
+.nar { color: var(--ink-2); }
+.vn {
+  font-family: var(--f-ui); font-weight: 650; font-stretch: 85%; font-size: .62em;
+  color: var(--ink-2); vertical-align: super; line-height: 0; margin-right: .15em;
+}
+.refline { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .7rem; }
+.ref { font-family: var(--f-ui); font-weight: 650; font-stretch: 90%; font-size: .92rem; font-variant-numeric: tabular-nums; }
+.who { font-style: italic; color: var(--ink-2); font-size: .95rem; }
+.textbtn {
+  appearance: none; border: 0; background: none; cursor: pointer; color: var(--ink-2);
+  font-family: var(--f-ui); font-stretch: 78%; font-weight: 650; font-size: .7rem;
+  letter-spacing: .09em; text-transform: uppercase; padding: .3rem 0; min-height: 32px;
+}
+.textbtn:hover { color: var(--red); }
+.story { max-width: 38rem; }
+.story summary {
+  cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: .45rem;
+  color: var(--ink-2); min-height: 36px;
+}
+.story summary::-webkit-details-marker { display: none; }
+.story summary::before {
+  content: ""; width: .45rem; height: .45rem; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s;
+}
+.story[open] summary::before { transform: rotate(45deg); }
+.story p { margin: .3rem 0 0; font-size: .98rem; line-height: 1.58; }
+
+/* ---------- bottom bar ---------- */
+.bar {
+  display: flex; gap: .5rem; align-items: stretch;
+  padding-block: .7rem .85rem; border-top: 1px solid var(--rule);
+}
+.btn {
+  appearance: none; border: 1.5px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer;
+  font-family: var(--f-ui); font-stretch: 78%; font-weight: 650; font-size: .82rem;
+  letter-spacing: .08em; text-transform: uppercase; border-radius: 2px;
+  min-height: 52px; padding: 0 1rem; display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.btn svg { width: 1.05em; height: 1.05em; flex: none; }
+.btn.back { width: 52px; padding: 0; flex: none; }
+.btn.talk { flex: 1 1 0; }
+.btn.next { flex: 1.35 1 0; background: var(--ink); color: var(--on-ink); }
+.btn.next:hover { background: var(--red); border-color: var(--red); }
+.btn:hover { border-color: var(--red); }
+.btn:disabled { opacity: .3; cursor: default; }
+
+/* ---------- talk sheet ---------- */
+.sheet {
+  position: fixed; inset: 0; z-index: 30; background: var(--paper);
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.sheet-in {
+  height: 100%; max-width: 46rem; margin: 0 auto;
+  display: grid; grid-template-rows: auto 1fr auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.sheet-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-block: .9rem .75rem; border-bottom: 1px solid var(--rule); }
+.sheet-top h2 { margin: 0; font-family: var(--f-display); font-style: italic; font-weight: 600; font-size: 1.5rem; line-height: 1; }
+.sheet-top h2 span { color: var(--red); }
+.close { width: 44px; height: 44px; padding: 0; min-height: 44px; }
+.thread { overflow-y: auto; min-height: 0; padding-block: 1.25rem; display: flex; flex-direction: column; gap: 1rem; overscroll-behavior: contain; }
+.msg { max-width: 92%; display: grid; gap: .65rem; }
+.msg p { margin: 0; }
+.msg.bot { align-self: flex-start; }
+.msg.bot > p { font-size: 1.08rem; line-height: 1.5; }
+.msg.me { align-self: flex-end; background: var(--ink); color: var(--on-ink); padding: .65rem .9rem; border-radius: 14px 14px 3px 14px; max-width: 80%; }
+.msg.me p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.picks { display: grid; gap: .5rem; }
+.pick {
+  appearance: none; text-align: left; cursor: pointer; background: transparent;
+  border: 1px solid var(--rule); border-radius: 3px; padding: .8rem .9rem; display: grid; gap: .3rem;
+}
+.pick:hover { border-color: var(--red); }
+.pick .ph { font-family: var(--f-display); font-style: italic; font-weight: 500; font-size: 1.35rem; line-height: 1.08; color: var(--red); }
+.pick .pr { font-family: var(--f-ui); font-stretch: 85%; font-weight: 650; font-size: .72rem; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); }
+.pick .pp { font-size: .96rem; line-height: 1.5; }
+.readall { justify-self: start; }
+.sec { display: grid; gap: .5rem; padding-top: .5rem; }
+.pray { border: 1.5px solid var(--ink); border-radius: 3px; padding: .9rem 1rem 1rem; display: grid; gap: .7rem; }
+.pray-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.pray-head h3 { margin: 0; font-family: var(--f-display); font-style: italic; font-weight: 600; font-size: 1.3rem; line-height: 1.1; }
+.pgroup { display: grid; gap: .35rem; }
+.pgroup .label { color: var(--red); margin: .2rem 0 0; }
+.pray ol { margin: 0; padding-left: 1.35rem; display: grid; gap: .55rem; }
+.pray li { font-size: 1rem; line-height: 1.5; padding-left: .15rem; }
+.pray li::marker { font-family: var(--f-ui); font-weight: 700; font-stretch: 85%; color: var(--ink-2); }
+.pref {
+  appearance: none; border: 0; background: none; padding: 0; cursor: pointer; white-space: nowrap;
+  font-family: var(--f-ui); font-stretch: 85%; font-weight: 650; font-size: .76rem; letter-spacing: .03em;
+  color: var(--red); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em;
+}
+span.pref { text-decoration: none; color: var(--ink-2); cursor: default; }
+.sec h3 { margin: 0; font-family: var(--f-display); font-style: italic; font-weight: 600; font-size: 1.3rem; line-height: 1.1; }
+.sec .say { color: var(--ink-2); font-style: italic; font-size: .98rem; line-height: 1.45; }
+.help { border: 1.5px solid var(--red); border-radius: 3px; padding: .9rem 1rem; display: grid; gap: .5rem; }
+.help strong { font-family: var(--f-ui); font-stretch: 85%; font-size: 1.05rem; letter-spacing: .02em; user-select: all; }
+.help a { color: var(--red); }
+.composer { display: grid; gap: .55rem; padding-block: .7rem .85rem; border-top: 1px solid var(--rule); }
+.quick { display: flex; gap: .4rem; overflow-x: auto; scrollbar-width: none; min-width: 0; }
+.quick::-webkit-scrollbar { display: none; }
+.quick button {
+  appearance: none; flex: none; cursor: pointer; border-radius: 999px; white-space: nowrap;
+  border: 1px solid var(--rule); background: transparent; color: var(--ink);
+  font-family: var(--f-text); font-style: italic; font-size: .95rem; padding: .35rem .8rem; min-height: 38px;
+}
+.quick button:hover { border-color: var(--red); color: var(--red); }
+.row { display: flex; gap: .5rem; align-items: stretch; }
+.row textarea {
+  flex: 1; min-width: 0; resize: none; border: 1.5px solid var(--ink); border-radius: 2px;
+  background: transparent; color: var(--ink); font-family: var(--f-text); font-size: 1.02rem; line-height: 1.4;
+  padding: .7rem .8rem; min-height: 52px; max-height: 8rem;
+}
+.row textarea::placeholder { color: var(--ink-2); }
+.row .btn { flex: none; background: var(--ink); color: var(--on-ink); }
+.note { margin: 0; font-size: .82rem; color: var(--ink-2); font-style: italic; }
+
+/* motion */
+@keyframes rise { from { transform: translateY(.35em); opacity: .0001; } to { transform: none; opacity: 1; } }
+.page.swap .speak { animation: rise .42s cubic-bezier(.2,.7,.2,1) both; }
+.page.swap .foryou { animation: rise .42s .06s cubic-bezier(.2,.7,.2,1) both; }
+.page.swap .verse { animation: rise .42s .12s cubic-bezier(.2,.7,.2,1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .page.swap .speak, .page.swap .foryou, .page.swap .verse { animation: none; }
+  .btn, .story summary::before { transition: none; }
+}
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%); z-index: 40;
+  bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  background: var(--ink); color: var(--on-ink); border-radius: 2px;
+  font-family: var(--f-ui); font-stretch: 85%; font-weight: 600; font-size: .85rem;
+  padding: .65rem 1rem; max-width: calc(100% - 32px);
+}
+@media (max-width: 400px) {
+  .btn { font-size: .76rem; letter-spacing: .06em; padding: 0 .7rem; }
+}
+.top-right { display: flex; align-items: center; gap: .8rem; }
+.install {
+  appearance: none; cursor: pointer; border: 1.5px solid var(--red); color: var(--red); background: transparent; border-radius: 2px;
+  font-family: var(--f-ui); font-stretch: 78%; font-weight: 650; font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
+  padding: .35rem .6rem; min-height: 32px;
+}
+.install:hover { background: var(--red); color: var(--paper); }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <h1 class="mark"><span>Red</span> Letter</h1>
+      <div class="by">built by <b>Otti</b></div>
+    </div>
+    <div class="top-right"><button class="install" id="install" type="button" hidden>Install</button><div class="count" id="count" aria-live="polite"><b>1</b> / 109</div></div>
+  </header>
+
+  <main class="stage" id="stage">
+    <article class="page" id="page">
+      <p class="greet" id="greet">Still up, Otti? Here is today’s word.</p>
+      <div class="eyebrow label" id="eyebrow"><span class="th" id="theme">Fear not</span></div>
+      <div class="speak">
+        <p class="addr">Otti,</p>
+        <h2 class="headline" id="headline">Fear thou not</h2>
+      </div>
+      <p class="foryou" id="foryou"></p>
+      <div class="verse">
+        <p class="passage" id="passage"></p>
+        <div class="refline"><span class="ref" id="ref"></span><span class="who" id="who"></span><button class="textbtn" id="copy" type="button">Copy</button></div>
+      </div>
+      <details class="story" id="story"><summary class="label">What was happening</summary><p id="gist"></p></details>
+    </article>
+  </main>
+
+  <nav class="bar" aria-label="Move between words">
+    <button class="btn back" id="back" type="button" aria-label="Previous word" disabled>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 8H3M7 4L3 8l4 4"/></svg>
+    </button>
+    <button class="btn talk" id="talk" type="button">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/></svg>Talk to me
+    </button>
+    <button class="btn next" id="next" type="button">Next
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg>
+    </button>
+  </nav>
+</div>
+
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <div class="sheet-in">
+    <div class="sheet-top">
+      <h2 id="sheet-title">Talk to <span>me</span></h2>
+      <button class="btn close" id="close" type="button" aria-label="Close">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg>
+      </button>
+    </div>
+    <div class="thread" id="thread" aria-live="polite">
+      <div class="msg bot"><p>What’s going on, Otti? Tell me how you feel, even in a few words, and I’ll find what God said about it, with prayer points to pray over it.</p></div>
+    </div>
+    <form class="composer" id="composer">
+      <div class="quick" id="quick" role="group" aria-label="Quick feelings">
+        <button type="button">I’m scared</button>
+        <button type="button">I’m tired</button>
+        <button type="button">I feel stuck</button>
+        <button type="button">I’m broke</button>
+        <button type="button">I feel alone</button>
+        <button type="button">I failed</button>
+        <button type="button">I’m waiting and nothing is happening</button>
+        <button type="button">I want to give up</button>
+      </div>
+      <div class="row">
+        <label for="say" class="label" hidden>How you feel</label>
+        <textarea id="say" rows="1" placeholder="Type how you feel…" autocomplete="off"></textarea>
+        <button class="btn" type="submit" id="send">Send</button>
+      </div>
+      <p class="note">This matches your words to verses and prayer points. It isn’t AI, and nothing you type leaves this page.</p>
+    </form>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script type="application/json" id="data">{"words":[{"id":"isaiah-41-10","hl":"Fear thou not","ref":"Isaiah 41:10","who":"God","th":"fear","to":"to Israel","v":[{"n":10,"r":[["Fear thou not",2],["; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness.",1]]}],"s":"God tells his people not to be afraid, because he is with them. He promises three things: to make them strong, to help them, and to hold them up.","p":"Whatever is in front of you today, Otti, you are not facing it alone. You will be strengthened, you will be helped, and you will be held up."},{"id":"isaiah-41-13","hl":"Fear not; I will help thee","ref":"Isaiah 41:13","who":"God","th":"fear","to":"to Israel","v":[{"n":13,"r":[["For I the LORD thy God will hold thy right hand, saying unto thee,",1],[" Fear not; I will help thee",2],[".",1]]}],"s":"God pictures himself holding your right hand, like a parent walking beside a child, and says it plainly: don’t be afraid, I will help you.","p":"Picture it: your hand in his. You don’t have to feel brave to keep walking. Just don’t let go."},{"id":"isaiah-43-1","hl":"Thou art mine","ref":"Isaiah 43:1–2","who":"God","th":"fear","to":"to Israel","v":[{"n":1,"r":[["But now thus saith the LORD that created thee, O Jacob, and he that formed thee, O Israel,",0],[" Fear not: for I have redeemed thee, I have called thee by thy name;",1],[" thou art mine",2],[".",1]]},{"n":2,"r":[["When thou passest through the waters, I will be with thee; and through the rivers, they shall not overflow thee: when thou walkest through the fire, thou shalt not be burned; neither shall the flame kindle upon thee.",1]]}],"s":"God reminds Israel that he made them, bought them back and calls them by name. Floods and fire will still come, but they will not destroy you, because he goes through them with you.","p":"The water might rise and the heat might come. It will not take you under. He knows your name, and you belong to him."},{"id":"joshua-1-9","hl":"Be strong and of a good courage","ref":"Joshua 1:9","who":"God","th":"fear","to":"to Joshua","v":[{"n":9,"r":[["Have not I commanded thee?",1],[" Be strong and of a good courage",2],["; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.",1]]}],"s":"Moses had just died, and Joshua had to lead a nation into hard battles. God commanded courage. The task was not small, but God would be with him everywhere he went.","p":"This is a command, not a suggestion. Be strong. Take courage. Every place you walk today, God is already there."},{"id":"joshua-1-5","hl":"I will not fail thee, nor forsake thee","ref":"Joshua 1:5","who":"God","th":"fear","to":"to Joshua","v":[{"n":5,"r":[["There shall not any man be able to stand before thee all the days of thy life: as I was with Moses, so I will be with thee:",1],[" I will not fail thee, nor forsake thee",2],[".",1]]}],"s":"God promises Joshua that no enemy will be able to stop him. The God who stood with Moses will stand with him, and will never walk away.","p":"People may fail you. Plans may fail you. He will not. Build on that."},{"id":"genesis-15-1","hl":"I am thy shield","ref":"Genesis 15:1","who":"God","th":"fear","to":"to Abram","v":[{"n":1,"r":[["After these things the word of the LORD came unto Abram in a vision, saying,",0],[" Fear not, Abram:",1],[" I am thy shield",2],[", and thy exceeding great reward.",1]]}],"s":"Abram had just come back from a war and was still waiting on promises that looked impossible. God told him not to fear: God himself is his protection and his greatest reward.","p":"You are waiting on things that still look far off. Don’t be afraid. God himself is your shield and your reward, before anything else shows up."},{"id":"jeremiah-1-8","hl":"Be not afraid of their faces","ref":"Jeremiah 1:8","who":"God","th":"fear","to":"to Jeremiah","v":[{"n":8,"r":[["Be not afraid of their faces",2],[": for I am with thee to deliver thee, saith the LORD.",1]]}],"s":"Jeremiah was young and scared of how people would react to his message. God told him not to be intimidated by anyone’s face, because God would rescue him.","p":"Stop shrinking because of how people might look at you. Their faces are not your judge. Say what you were given to say."},{"id":"2-chronicles-20-15","hl":"The battle is not yours, but God’s","ref":"2 Chronicles 20:15","who":"God","th":"fear","to":"to Judah","v":[{"n":15,"r":[["And he said, Hearken ye, all Judah, and ye inhabitants of Jerusalem, and thou king Jehoshaphat, Thus saith the LORD unto you,",0],[" Be not afraid nor dismayed by reason of this great multitude; for",1],[" the battle is not yours, but God’s",2],[".",1]]}],"s":"A huge army was marching against King Jehoshaphat. God told him not to panic, because this fight belonged to God, not to him.","p":"That thing that feels too big for you? You were never meant to fight it alone. Breathe. The battle is God’s."},{"id":"2-chronicles-20-17","hl":"Stand ye still, and see","ref":"2 Chronicles 20:17","who":"God","th":"fear","to":"to Judah","v":[{"n":17,"r":[["Ye shall not need to fight in this battle: set yourselves,",1],[" stand ye still, and see",2],[" the salvation of the LORD with you, O Judah and Jerusalem: fear not, nor be dismayed; to morrow go out against them: for the LORD will be with you.",1]]}],"s":"Judah would not even need to fight. They still had to show up the next day, but their job was to stand firm and watch God save them.","p":"Show up, stand your ground, and watch. Some battles are won by refusing to run."},{"id":"isaiah-54-4","hl":"Fear not; for thou shalt not be ashamed","ref":"Isaiah 54:4","who":"God","th":"fear","to":"to Zion","v":[{"n":4,"r":[["Fear not; for thou shalt not be ashamed",2],[": neither be thou confounded; for thou shalt not be put to shame: for thou shalt forget the shame of thy youth, and shalt not remember the reproach of thy widowhood any more.",1]]}],"s":"God speaks to a people who felt disgraced and abandoned. He promises their shame will be so far behind them that they will forget it.","p":"Whatever embarrassed you, whatever you are still ashamed of, it does not get the last word. You will forget it."},{"id":"isaiah-54-17","hl":"No weapon that is formed against thee shall prosper","ref":"Isaiah 54:17","who":"God","th":"fear","to":"to his servants","v":[{"n":17,"r":[["No weapon that is formed against thee shall prosper",2],["; and every tongue that shall rise against thee in judgment thou shalt condemn. This is the heritage of the servants of the LORD, and their righteousness is of me, saith the LORD.",1]]}],"s":"God promises that every weapon and every accusation raised against his servants will fail. Their protection and their right standing come from him.","p":"Let them talk. Let them plan. Nothing formed against you gets to win."},{"id":"matthew-14-27","hl":"Be of good cheer; it is I","ref":"Matthew 14:27","who":"Jesus","th":"fear","to":"to the disciples, on the water","v":[{"n":27,"r":[["But straightway Jesus spake unto them, saying,",0],[" Be of good cheer; it is I",2],["; be not afraid.",1]]}],"s":"The disciples were rowing through a storm at night when they saw someone walking on the water. They screamed, thinking it was a ghost. Jesus called out: cheer up, it’s me, don’t be afraid.","p":"When the storm is loud and something scary is coming toward you, look closer. It might be him. Cheer up."},{"id":"mark-5-36","hl":"Be not afraid, only believe","ref":"Mark 5:36","who":"Jesus","th":"fear","to":"to Jairus","v":[{"n":36,"r":[["As soon as Jesus heard the word that was spoken, he saith unto the ruler of the synagogue,",0],[" Be not afraid, only believe",2],[".",1]]}],"s":"Jairus had just been told his daughter was dead. Jesus ignored the bad news and told him to stop fearing and keep believing. Then he raised the girl to life.","p":"Maybe you just heard bad news. Don’t let it write the ending. Drop the fear and keep believing."},{"id":"luke-12-32","hl":"Fear not, little flock","ref":"Luke 12:32","who":"Jesus","th":"fear","to":"to the disciples","v":[{"n":32,"r":[["Fear not, little flock",2],["; for it is your Father’s good pleasure to give you the kingdom.",1]]}],"s":"Jesus calls his followers a little flock: few and easy to overlook. He tells them not to fear, because the Father is glad to give them his kingdom.","p":"You might feel small and outnumbered. It doesn’t matter. Your Father is glad to give you the kingdom."},{"id":"matthew-10-31","hl":"Ye are of more value than many sparrows","ref":"Matthew 10:31","who":"Jesus","th":"fear","to":"to the twelve","v":[{"n":31,"r":[["Fear ye not therefore,",1],[" ye are of more value than many sparrows",2],[".",1]]}],"s":"God watches over sparrows that sell for pennies. Jesus says that if God cares about them, you are worth far more to him.","p":"If he keeps track of sparrows, he has not lost track of you. You matter more than you think, Otti."},{"id":"matthew-8-26","hl":"Why are ye fearful, O ye of little faith?","ref":"Matthew 8:26","who":"Jesus","th":"fear","to":"to the disciples, in the storm","v":[{"n":26,"r":[["And he saith unto them,",0],[" Why are ye fearful, O ye of little faith?",2],[" Then he arose, and rebuked the winds and the sea; and there was a great calm.",0]]}],"s":"The disciples panicked in a storm while Jesus slept in the boat. He asked why they were so afraid, then calmed the wind and the sea with a word.","p":"He asks it like a real question, so answer it: why are you so afraid? He is in the boat with you."},{"id":"acts-18-9","hl":"Be not afraid, but speak","ref":"Acts 18:9–10","who":"Jesus","th":"fear","to":"to Paul","v":[{"n":9,"r":[["Then spake the Lord to Paul in the night by a vision,",0],[" Be not afraid, but speak",2],[", and hold not thy peace:",1]]},{"n":10,"r":[["For I am with thee, and no man shall set on thee to hurt thee: for I have much people in this city.",1]]}],"s":"Paul faced strong opposition in Corinth and could have gone quiet. Jesus spoke to him at night: keep speaking, I am with you, and no one here will harm you.","p":"Don’t go quiet. Keep speaking, keep building, keep showing up. He is with you, and people are waiting for what you have."},{"id":"revelation-1-17","hl":"Fear not; I am the first and the last","ref":"Revelation 1:17–18","who":"Jesus","th":"fear","to":"to John","v":[{"n":17,"r":[["And when I saw him, I fell at his feet as dead. And he laid his right hand upon me, saying unto me,",0],[" Fear not; I am the first and the last",2],[":",1]]},{"n":18,"r":[["I am he that liveth, and was dead; and, behold, I am alive for evermore, Amen; and have the keys of hell and of death.",1]]}],"s":"John fell down like a dead man when he saw the risen Jesus. Jesus touched him and said: don’t fear. I died, I am alive forever, and I hold the keys of death.","p":"The one who beat death is the one telling you not to fear. Nothing you are facing is bigger than that."},{"id":"exodus-14-15","hl":"Go forward","ref":"Exodus 14:15","who":"God","th":"rise","to":"to Moses, at the Red Sea","v":[{"n":15,"r":[["And the LORD said unto Moses,",0],[" Wherefore criest thou unto me? speak unto the children of Israel, that they",1],[" go forward",2],["…",2]]}],"s":"Israel was trapped between the Red Sea and Pharaoh’s army, and Moses was crying out to God. God said: stop crying and tell the people to move forward. Then the sea opened.","p":"Enough crying at the wall in front of you. Move forward. The way opens when you take the step."},{"id":"joshua-7-10","hl":"Get thee up","ref":"Joshua 7:10","who":"God","th":"rise","to":"to Joshua","v":[{"n":10,"r":[["And the LORD said unto Joshua,",0],[" Get thee up",2],["; wherefore liest thou thus upon thy face?",1]]}],"s":"After a painful defeat, Joshua lay on the ground in grief. God told him to get up. There was a problem to fix, and lying on his face would not fix it.","p":"Get up, Otti. The loss hurt, but lying on your face won’t fix it. Find the problem, fix it, and go again."},{"id":"deuteronomy-2-3","hl":"Ye have compassed this mountain long enough","ref":"Deuteronomy 2:3","who":"God","th":"rise","to":"to Israel","v":[{"n":3,"r":[["Ye have compassed this mountain long enough",2],[": turn you northward.",1]]}],"s":"Israel had circled the same mountain for a long time. God said: you have gone around this long enough, now turn north. It is a word for anyone stuck in the same loop.","p":"You have gone around the same mountain long enough. Same habits, same loop. Today, turn."},{"id":"deuteronomy-1-6","hl":"Ye have dwelt long enough in this mount","ref":"Deuteronomy 1:6–7","who":"God","th":"rise","to":"to Israel","v":[{"n":6,"r":[["The LORD our God spake unto us in Horeb, saying,",0],[" Ye have dwelt long enough in this mount",2],[":",1]]},{"n":7,"r":[["Turn you, and take your journey",1],["…",1]]}],"s":"At Mount Horeb, God told Israel they had stayed in one place long enough. It was time to pack up and start the journey to the land he had promised.","p":"You have stayed in that comfortable spot long enough. Pack up. There is more ground ahead of you."},{"id":"joshua-1-3","hl":"Every place that the sole of your foot shall tread upon","ref":"Joshua 1:3","who":"God","th":"rise","to":"to Joshua","v":[{"n":3,"r":[["Every place that the sole of your foot shall tread upon",2],[", that have I given unto you, as I said unto Moses.",1]]}],"s":"God promised Joshua that every place he set his foot would be his. The land was already promised, but he still had to step out and walk on it.","p":"The promise is real, but it covers ground you actually walk on. Step out today."},{"id":"jeremiah-1-7","hl":"Say not, I am a child","ref":"Jeremiah 1:7","who":"God","th":"rise","to":"to Jeremiah","v":[{"n":7,"r":[["But the LORD said unto me,",0],[" Say not, I am a child",2],[": for thou shalt go to all that I shall send thee, and whatsoever I command thee thou shalt speak.",1]]}],"s":"Jeremiah said he was too young to speak for God. God told him to drop that excuse: go wherever I send you and say whatever I tell you.","p":"Drop the excuse. Too young, too new, too small: none of it counts. Go where you are sent and say what you are given."},{"id":"exodus-4-12","hl":"Now therefore go","ref":"Exodus 4:12","who":"God","th":"rise","to":"to Moses","v":[{"n":12,"r":[["Now therefore go",2],[", and I will be with thy mouth, and teach thee what thou shalt say.",1]]}],"s":"Moses said he was not a good speaker. God told him to go anyway. God made his mouth, and God would teach him what to say.","p":"You don’t have to be smooth. Go anyway. He will give you the words when you get there."},{"id":"ezekiel-2-1","hl":"Stand upon thy feet","ref":"Ezekiel 2:1","who":"God","th":"rise","to":"to Ezekiel","v":[{"n":1,"r":[["And he said unto me,",0],[" Son of man,",1],[" stand upon thy feet",2],[", and I will speak unto thee.",1]]}],"s":"Ezekiel fell on his face after seeing God’s glory. God’s first words to him were: stand up on your feet, I have something to tell you.","p":"Get off the floor. Stand on your feet. There is something you need to hear, and you hear it standing up."},{"id":"1-samuel-16-1","hl":"How long wilt thou mourn","ref":"1 Samuel 16:1","who":"God","th":"rise","to":"to Samuel","v":[{"n":1,"r":[["And the LORD said unto Samuel,",0],[" How long wilt thou mourn",2],[" for Saul, seeing I have rejected him from reigning over Israel? fill thine horn with oil, and go, I will send thee to Jesse the Beth-lehemite: for I have provided me a king among his sons.",1]]}],"s":"Samuel kept grieving over King Saul, who had failed. God asked how long he would mourn what was over, then sent him to anoint a new king: David.","p":"How long will you mourn what is already over? Fill your horn and go. Something new is waiting."},{"id":"judges-6-14","hl":"Go in this thy might","ref":"Judges 6:14","who":"God","th":"rise","to":"to Gideon","v":[{"n":14,"r":[["And the LORD looked upon him, and said,",0],[" Go in this thy might",2],[", and thou shalt save Israel from the hand of the Midianites: have not I sent thee?",1]]}],"s":"Gideon was hiding from his enemies and felt weak and small. God told him to go in the strength he already had, because God was the one sending him.","p":"You don’t need more strength before you start. Go with the strength you have. You were sent."},{"id":"isaiah-60-1","hl":"Arise, shine; for thy light is come","ref":"Isaiah 60:1","who":"God","th":"rise","to":"to Zion","v":[{"n":1,"r":[["Arise, shine; for thy light is come",2],[", and the glory of the LORD is risen upon thee.",1]]}],"s":"God tells his people to get up and shine. Their light has come, and God’s glory is rising on them like the sun.","p":"Get up and shine. Your light has come. Stop dimming it."},{"id":"isaiah-43-18","hl":"I will do a new thing","ref":"Isaiah 43:18–19","who":"God","th":"rise","to":"to Israel","v":[{"n":18,"r":[["Remember ye not the former things, neither consider the things of old.",1]]},{"n":19,"r":[["Behold,",1],[" I will do a new thing",2],["; now it shall spring forth; shall ye not know it? I will even make a way in the wilderness, and rivers in the desert.",1]]}],"s":"God tells his people to stop living in the past. He is starting something new, and he can make a road through the wilderness and rivers in the desert.","p":"Stop replaying the past. Something new is already springing up. Look for it."},{"id":"luke-5-4","hl":"Launch out into the deep","ref":"Luke 5:4","who":"Jesus","th":"rise","to":"to Simon Peter","v":[{"n":4,"r":[["Now when he had left speaking, he said unto Simon,",0],[" Launch out into the deep",2],[", and let down your nets for a draught.",1]]}],"s":"Peter had fished all night and caught nothing. Jesus told him to go out into deep water and try again. He caught so many fish that his nets began to break.","p":"You worked all night and caught nothing. Go deeper and throw again. The next cast could break the nets."},{"id":"matthew-14-29","hl":"Come","ref":"Matthew 14:29","who":"Jesus","th":"rise","to":"to Peter, on the water","v":[{"n":29,"r":[["And he said,",0],[" Come",2],[".",1],[" And when Peter was come down out of the ship, he walked on the water, to go to Jesus.",0]]}],"s":"Peter asked if he could come to Jesus on the water. Jesus answered with one word: come. Peter stepped out of the boat and walked on the sea.","p":"One word: come. Get out of the boat, Otti."},{"id":"luke-7-14","hl":"Young man, I say unto thee, Arise","ref":"Luke 7:14","who":"Jesus","th":"rise","to":"to the young man at Nain","v":[{"n":14,"r":[["And he came and touched the bier: and they that bare him stood still. And he said,",0],[" Young man, I say unto thee, Arise",2],[".",1]]}],"s":"Jesus met the funeral of a widow’s only son in the town of Nain. He touched the bier and told the young man to get up. The dead man sat up and spoke.","p":"Whatever in you feels dead, he speaks to it the same way: arise."},{"id":"john-5-8","hl":"Rise, take up thy bed, and walk","ref":"John 5:8","who":"Jesus","th":"rise","to":"to the man at Bethesda","v":[{"n":8,"r":[["Jesus saith unto him,",0],[" Rise, take up thy bed, and walk",2],[".",1]]}],"s":"A man had been sick for 38 years, lying by the pool of Bethesda. Jesus told him to get up, pick up his mat and walk, and he did.","p":"No more waiting for the perfect moment. Rise. Pick up your mat. Walk."},{"id":"john-11-43","hl":"Lazarus, come forth","ref":"John 11:43","who":"Jesus","th":"rise","to":"to Lazarus","v":[{"n":43,"r":[["And when he thus had spoken, he cried with a loud voice,",0],[" Lazarus, come forth",2],[".",1]]}],"s":"Lazarus had been in the grave for four days. Jesus stood at the tomb and shouted for him to come out, and Lazarus walked out alive.","p":"Four days in the grave was not too late for him. Come out of whatever you have been buried in."},{"id":"john-4-35","hl":"Lift up your eyes","ref":"John 4:35","who":"Jesus","th":"rise","to":"to the disciples","v":[{"n":35,"r":[["Say not ye, There are yet four months, and then cometh harvest? behold, I say unto you,",1],[" Lift up your eyes",2],[", and look on the fields; for they are white already to harvest.",1]]}],"s":"The disciples thought the harvest was still months away. Jesus told them to look up: the opportunity is ready now, not later.","p":"Stop saying “later.” Lift your eyes. The field is ready now."},{"id":"1-kings-3-5","hl":"Ask what I shall give thee","ref":"1 Kings 3:5","who":"God","th":"ask","to":"to Solomon","v":[{"n":5,"r":[["In Gibeon the LORD appeared to Solomon in a dream by night: and God said,",0],[" Ask what I shall give thee",2],[".",1]]}],"s":"God appeared to young King Solomon in a dream and told him to ask for anything. Solomon asked for wisdom, and God gave him wisdom plus riches and honour.","p":"If he asked you tonight what you want, what would you say? Solomon asked for wisdom first, and the rest followed."},{"id":"jeremiah-33-3","hl":"Call unto me, and I will answer thee","ref":"Jeremiah 33:3","who":"God","th":"ask","to":"to Jeremiah","v":[{"n":3,"r":[["Call unto me, and I will answer thee",2],[", and shew thee great and mighty things, which thou knowest not.",1]]}],"s":"Jeremiah was shut up in prison. God told him to call, and promised to answer and show him great things he could never work out on his own.","p":"Call him, even from a locked room. He will answer and show you things you can’t figure out alone."},{"id":"psalms-81-10","hl":"Open thy mouth wide, and I will fill it","ref":"Psalm 81:10","who":"God","th":"ask","to":"to Israel","v":[{"n":10,"r":[["I am the LORD thy God, which brought thee out of the land of Egypt:",1],[" open thy mouth wide, and I will fill it",2],[".",1]]}],"s":"God reminds Israel that he brought them out of slavery in Egypt. Then he invites them to open their mouth wide, ask big, and he will fill it.","p":"Stop asking small. Open your mouth wide. He brought you this far, and he can fill it."},{"id":"genesis-18-14","hl":"Is any thing too hard for the LORD?","ref":"Genesis 18:14","who":"God","th":"ask","to":"to Abraham","v":[{"n":14,"r":[["Is any thing too hard for the LORD?",2],[" At the time appointed I will return unto thee, according to the time of life, and Sarah shall have a son.",1]]}],"s":"Sarah laughed when God said she would have a son in her old age. God asked: is anything too hard for the LORD? A year later, Isaac was born.","p":"Is anything too hard for the LORD? Answer honestly. Then stop laughing at your own dreams."},{"id":"jeremiah-32-27","hl":"Is there any thing too hard for me?","ref":"Jeremiah 32:27","who":"God","th":"ask","to":"to Jeremiah","v":[{"n":27,"r":[["Behold, I am the LORD, the God of all flesh:",1],[" is there any thing too hard for me?",2]]}],"s":"Jerusalem was about to fall, yet God told Jeremiah to buy a field there as a sign of a future. God reminded him that nothing is too hard for him.","p":"When everything says it’s over, he can still tell you to buy the field. Nothing is too hard for him."},{"id":"isaiah-65-24","hl":"Before they call, I will answer","ref":"Isaiah 65:24","who":"God","th":"ask","to":"to his people","v":[{"n":24,"r":[["And it shall come to pass, that",1],[" before they call, I will answer",2],["; and while they are yet speaking, I will hear.",1]]}],"s":"God describes a time when he answers his people before they even finish praying. He hears them while they are still speaking.","p":"Before you finish praying, he has already heard you. Talk to him."},{"id":"matthew-7-7","hl":"Ask, and it shall be given you","ref":"Matthew 7:7","who":"Jesus","th":"ask","to":"on the mount","v":[{"n":7,"r":[["Ask, and it shall be given you",2],["; seek, and ye shall find; knock, and it shall be opened unto you",1],["…",1]]}],"s":"In the Sermon on the Mount, Jesus says to keep asking, keep seeking and keep knocking. Those who ask receive, and doors open for those who knock.","p":"Ask. Seek. Knock. Keep doing all three. Doors open for people who knock."},{"id":"matthew-17-20","hl":"Nothing shall be impossible unto you","ref":"Matthew 17:20","who":"Jesus","th":"ask","to":"to the disciples","v":[{"n":20,"r":[["And Jesus said unto them,",0],[" Because of your unbelief: for verily I say unto you, If ye have faith as a grain of mustard seed, ye shall say unto this mountain, Remove hence to yonder place; and it shall remove; and",1],[" nothing shall be impossible unto you",2],[".",1]]}],"s":"The disciples could not heal a boy and asked Jesus why. He said that faith even as small as a mustard seed can move a mountain. With that faith, nothing is impossible.","p":"Your faith doesn’t have to be big. Faith the size of a mustard seed can move the mountain in front of you."},{"id":"mark-9-23","hl":"All things are possible to him that believeth","ref":"Mark 9:23","who":"Jesus","th":"ask","to":"to a father","v":[{"n":23,"r":[["Jesus said unto him,",0],[" If thou canst believe,",1],[" all things are possible to him that believeth",2],[".",1]]}],"s":"A desperate father asked Jesus to help his son “if you can.” Jesus turned it around: the question is whether you can believe. Everything is possible for the one who believes.","p":"The question isn’t whether he can. It’s whether you will believe. Everything is possible to the one who does."},{"id":"matthew-19-26","hl":"With God all things are possible","ref":"Matthew 19:26","who":"Jesus","th":"ask","to":"to the disciples","v":[{"n":26,"r":[["But Jesus beheld them, and said unto them,",0],[" With men this is impossible; but",1],[" with God all things are possible",2],[".",1]]}],"s":"The disciples asked who could ever be saved. Jesus said that for people it is impossible, but with God everything is possible.","p":"Yes, it’s impossible for you. That’s the point. With God, everything is possible."},{"id":"mark-11-22","hl":"Have faith in God","ref":"Mark 11:22","who":"Jesus","th":"ask","to":"to the disciples","v":[{"n":22,"r":[["And Jesus answering saith unto them,",0],[" Have faith in God",2],[".",1]]}],"s":"Peter was amazed that a fig tree Jesus had spoken to had withered overnight. Jesus answered simply: have faith in God.","p":"Three words for today, Otti: have faith in God."},{"id":"mark-11-24","hl":"Believe that ye receive them","ref":"Mark 11:24","who":"Jesus","th":"ask","to":"to the disciples","v":[{"n":24,"r":[["Therefore I say unto you, What things soever ye desire, when ye pray,",1],[" believe that ye receive them",2],[", and ye shall have them.",1]]}],"s":"Jesus teaches that when you pray, you should believe you have already received what you asked for, and you will have it.","p":"When you pray, pray like it’s already yours. Believe you have received it."},{"id":"john-14-12","hl":"Greater works than these shall he do","ref":"John 14:12","who":"Jesus","th":"ask","to":"to the disciples","v":[{"n":12,"r":[["Verily, verily, I say unto you, He that believeth on me, the works that I do shall he do also; and",1],[" greater works than these shall he do",2],["; because I go unto my Father.",1]]}],"s":"Jesus tells his disciples that whoever believes in him will do the same works he did, and even greater ones, because he is going to the Father.","p":"You were made for greater works, not smaller ones. Believe it."},{"id":"john-14-14","hl":"If ye shall ask any thing in my name, I will do it","ref":"John 14:14","who":"Jesus","th":"ask","to":"to the disciples","v":[{"n":14,"r":[["If ye shall ask any thing in my name, I will do it",2],[".",1]]}],"s":"Jesus makes a direct promise: if you ask for anything in his name, he will do it.","p":"Anything, in his name. That is the promise. So ask."},{"id":"john-16-24","hl":"Ask, and ye shall receive","ref":"John 16:24","who":"Jesus","th":"ask","to":"to the disciples","v":[{"n":24,"r":[["Hitherto have ye asked nothing in my name:",1],[" ask, and ye shall receive",2],[", that your joy may be full.",1]]}],"s":"Jesus points out that his disciples have not yet asked for anything in his name. He tells them to ask and receive, so their joy will be complete.","p":"You haven’t really asked yet. Ask, and receive, so your joy can be full."},{"id":"john-20-27","hl":"Be not faithless, but believing","ref":"John 20:27","who":"Jesus","th":"ask","to":"to Thomas","v":[{"n":27,"r":[["Then saith he to Thomas,",0],[" Reach hither thy finger, and behold my hands; and reach hither thy hand, and thrust it into my side: and",1],[" be not faithless, but believing",2],[".",1]]}],"s":"Thomas refused to believe Jesus had risen unless he could touch the wounds. Jesus showed him his hands and side and said: stop doubting and believe.","p":"Stop doubting and believe. You have seen his hand in your life enough times to trust him again."},{"id":"john-11-40","hl":"If thou wouldest believe, thou shouldest see the glory of God","ref":"John 11:40","who":"Jesus","th":"ask","to":"to Martha","v":[{"n":40,"r":[["Jesus saith unto her,",0],[" Said I not unto thee, that,",1],[" if thou wouldest believe, thou shouldest see the glory of God",2],["?",1]]}],"s":"At Lazarus’s tomb, Martha worried about the smell after four days. Jesus reminded her: if you believe, you will see the glory of God.","p":"You believe first, then you see the glory. He said so."},{"id":"haggai-2-4","hl":"Be strong … and work: for I am with you","ref":"Haggai 2:4","who":"God","th":"build","to":"to Zerubbabel and the people","v":[{"n":4,"r":[["Yet now",1],[" be strong",2],[", O Zerubbabel, saith the LORD; and be strong, O Joshua, son of Josedech, the high priest; and be strong, all ye people of the land, saith the LORD,",1],[" and work: for I am with you",2],[", saith the LORD of hosts",1],["…",1]]}],"s":"The people were rebuilding God’s temple, and it looked like nothing next to the old one. God told the leaders and the people to be strong and keep working, because he was with them.","p":"It may look small next to what you imagined. Be strong and work anyway. He is with you on the job."},{"id":"habakkuk-2-2","hl":"Write the vision, and make it plain","ref":"Habakkuk 2:2–3","who":"God","th":"build","to":"to Habakkuk","v":[{"n":2,"r":[["And the LORD answered me, and said,",0],[" Write the vision, and make it plain",2],[" upon tables, that he may run that readeth it.",1]]},{"n":3,"r":[["For the vision is yet for an appointed time, but at the end it shall speak, and not lie: though it tarry, wait for it; because it will surely come, it will not tarry.",1]]}],"s":"God told Habakkuk to write the vision down clearly so anyone who reads it can run with it. The vision has its appointed time. If it is slow, wait for it, because it will surely come.","p":"Write the vision down tonight, Otti. Make it plain. If it’s slow, wait for it. It will come."},{"id":"zechariah-4-10","hl":"Who hath despised the day of small things?","ref":"Zechariah 4:10","who":"God","th":"build","to":"to Zerubbabel","v":[{"n":10,"r":[["For",1],[" who hath despised the day of small things?",2],["…",2]]}],"s":"The temple rebuild had started small, and some people looked down on it. God asks: who dares to despise small beginnings? He was glad to see the work underway.","p":"Don’t despise the small beginning. Every big thing you admire started as something people looked down on."},{"id":"zechariah-4-6","hl":"Not by might, nor by power, but by my spirit","ref":"Zechariah 4:6","who":"God","th":"build","to":"to Zerubbabel","v":[{"n":6,"r":[["Then he answered and spake unto me, saying, This is the word of the LORD unto Zerubbabel, saying,",0],[" Not by might, nor by power, but by my spirit",2],[", saith the LORD of hosts.",1]]}],"s":"Zerubbabel had to rebuild the temple with very little. God told him it would not happen by strength or by power, but by God’s Spirit.","p":"You don’t have the money or the army. You don’t need them. Not by might, not by power, but by his Spirit."},{"id":"isaiah-60-22","hl":"A little one shall become a thousand","ref":"Isaiah 60:22","who":"God","th":"build","to":"to Zion","v":[{"n":22,"r":[["A little one shall become a thousand",2],[", and a small one a strong nation: I the LORD will hasten it in his time.",1]]}],"s":"God promises that the smallest and weakest among his people will grow into thousands, even a strong nation. When the time is right, he will make it happen fast.","p":"The little one becomes a thousand. Keep going. When the time comes, it will move fast."},{"id":"isaiah-54-2","hl":"Enlarge the place of thy tent","ref":"Isaiah 54:2–3","who":"God","th":"build","to":"to Zion","v":[{"n":2,"r":[["Enlarge the place of thy tent",2],[", and let them stretch forth the curtains of thine habitations: spare not, lengthen thy cords, and strengthen thy stakes;",1]]},{"n":3,"r":[["For thou shalt break forth on the right hand and on the left; and thy seed shall inherit the Gentiles, and make the desolate cities to be inhabited.",1]]}],"s":"God tells his people to make room for growth: widen the tent, lengthen the ropes, drive the stakes deep. They are about to spread out in every direction.","p":"Make room. Think bigger, plan bigger, drive your stakes deep. Growth is coming."},{"id":"isaiah-45-2","hl":"I will go before thee, and make the crooked places straight","ref":"Isaiah 45:2–3","who":"God","th":"build","to":"to Cyrus","v":[{"n":2,"r":[["I will go before thee, and make the crooked places straight",2],[": I will break in pieces the gates of brass, and cut in sunder the bars of iron:",1]]},{"n":3,"r":[["And I will give thee the treasures of darkness, and hidden riches of secret places, that thou mayest know that I, the LORD, which call thee by thy name, am the God of Israel.",1]]}],"s":"God spoke ahead of time about King Cyrus. God would go before him, smash gates of bronze and iron, and give him treasures hidden in secret places.","p":"He goes ahead of you. Gates of bronze, bars of iron, doors that look shut. He breaks them first."},{"id":"isaiah-41-15","hl":"Thou shalt thresh the mountains","ref":"Isaiah 41:15","who":"God","th":"build","to":"to Israel","v":[{"n":15,"r":[["Behold, I will make thee a new sharp threshing instrument having teeth:",1],[" thou shalt thresh the mountains",2],[", and beat them small, and shalt make the hills as chaff.",1]]}],"s":"Just before this, God calls Israel a weak little worm. Then he promises to turn them into a sharp new threshing tool that grinds mountains to dust.","p":"You might feel like a worm right now. He is turning you into something sharp enough to grind mountains down."},{"id":"isaiah-48-17","hl":"Which teacheth thee to profit","ref":"Isaiah 48:17","who":"God","th":"build","to":"to Israel","v":[{"n":17,"r":[["Thus saith the LORD, thy Redeemer, the Holy One of Israel;",0],[" I am the LORD thy God",1],[" which teacheth thee to profit",2],[", which leadeth thee by the way that thou shouldest go.",1]]}],"s":"God describes himself as the one who teaches his people how to profit and leads them in the way they should go.","p":"Ask him to teach you how to profit and which way to go. He leads people who ask to be led."},{"id":"joel-2-25","hl":"I will restore to you the years that the locust hath eaten","ref":"Joel 2:25","who":"God","th":"build","to":"to his people","v":[{"n":25,"r":[["And",1],[" I will restore to you the years that the locust hath eaten",2],[", the cankerworm, and the caterpiller, and the palmerworm, my great army which I sent among you.",1]]}],"s":"Swarms of locusts had eaten Judah’s crops for years. God promises to give back the years that were lost.","p":"The years you lost are not gone for good. He can give them back."},{"id":"genesis-13-14","hl":"Lift up now thine eyes","ref":"Genesis 13:14–15","who":"God","th":"build","to":"to Abram","v":[{"n":14,"r":[["And the LORD said unto Abram, after that Lot was separated from him,",0],[" Lift up now thine eyes",2],[", and look from the place where thou art northward, and southward, and eastward, and westward:",1]]},{"n":15,"r":[["For all the land which thou seest, to thee will I give it, and to thy seed for ever.",1]]}],"s":"After Lot chose the best land and moved away, God told Abram to look up in every direction: all the land he could see would belong to him and his family forever.","p":"Lift your eyes, Otti. Look north, south, east and west. Don’t think small about what’s ahead."},{"id":"genesis-12-2","hl":"I will bless thee, and make thy name great","ref":"Genesis 12:2","who":"God","th":"build","to":"to Abram","v":[{"n":2,"r":[["And I will make of thee a great nation, and",1],[" I will bless thee, and make thy name great",2],["; and thou shalt be a blessing",1],["…",1]]}],"s":"God called Abram to leave his home and promised to make him a great nation, bless him, make his name great, and make him a blessing to others.","p":"You are blessed so you can be a blessing. Build something that lifts other people, and let him make your name great."},{"id":"jeremiah-12-5","hl":"How canst thou contend with horses?","ref":"Jeremiah 12:5","who":"God","th":"build","to":"to Jeremiah","v":[{"n":5,"r":[["If thou hast run with the footmen, and they have wearied thee, then",1],[" how canst thou contend with horses?",2],[" and if in the land of peace, wherein thou trustedst, they wearied thee, then how wilt thou do in the swelling of Jordan?",1]]}],"s":"Jeremiah complained that life was hard. God answered: if running with people on foot tires you, how will you race horses? Harder things are coming, so get stronger.","p":"If this tires you, what happens when you race horses? Get stronger now. Bigger races are coming."},{"id":"matthew-25-21","hl":"Thou hast been faithful over a few things","ref":"Matthew 25:21","who":"Jesus","th":"build","to":"in the parable of the talents","v":[{"n":21,"r":[["His lord said unto him,",0],[" Well done, thou good and faithful servant:",1],[" thou hast been faithful over a few things",2],[", I will make thee ruler over many things: enter thou into the joy of thy lord.",1]]}],"s":"In this story, a master praises the servant who grew what he was given. Because he was faithful with a little, he is trusted with much more.","p":"Be faithful with the little you have right now. That is how you get trusted with more."},{"id":"luke-16-10","hl":"He that is faithful in that which is least is faithful also in much","ref":"Luke 16:10","who":"Jesus","th":"build","to":"to the disciples","v":[{"n":10,"r":[["He that is faithful in that which is least is faithful also in much",2],[": and he that is unjust in the least is unjust also in much.",1]]}],"s":"Jesus says how you handle small things shows how you will handle big things. Faithfulness with little builds trust for much.","p":"The small tasks count. How you handle little is how you will handle much."},{"id":"john-9-4","hl":"While it is day","ref":"John 9:4","who":"Jesus","th":"build","to":"to the disciples","v":[{"n":4,"r":[["I must work the works of him that sent me,",1],[" while it is day",2],[": the night cometh, when no man can work.",1]]}],"s":"Jesus says the work must be done while it is still day, because night is coming when no one can work. Time is short, so use it now.","p":"Work while it is day. Time is short. Do the thing today."},{"id":"matthew-5-14","hl":"Ye are the light of the world","ref":"Matthew 5:14","who":"Jesus","th":"build","to":"on the mount","v":[{"n":14,"r":[["Ye are the light of the world",2],[". A city that is set on an hill cannot be hid.",1]]}],"s":"Jesus tells ordinary people that they are the light of the world. Like a city on a hill, what they carry cannot be hidden.","p":"You are the light of the world. You were not made to hide."},{"id":"matthew-5-16","hl":"Let your light so shine","ref":"Matthew 5:16","who":"Jesus","th":"build","to":"on the mount","v":[{"n":16,"r":[["Let your light so shine",2],[" before men, that they may see your good works, and glorify your Father which is in heaven.",1]]}],"s":"Jesus says to let your light shine so people see your good work, and the glory goes to God.","p":"Let them see your good work. Do it so well that God gets the glory."},{"id":"revelation-3-8","hl":"I have set before thee an open door","ref":"Revelation 3:8","who":"Jesus","th":"build","to":"to the church in Philadelphia","v":[{"n":8,"r":[["I know thy works: behold,",1],[" I have set before thee an open door",2],[", and no man can shut it: for thou hast a little strength, and hast kept my word, and hast not denied my name.",1]]}],"s":"Jesus tells a small church in Philadelphia that he sees their work. They have little strength, but he has opened a door for them that no one can shut.","p":"You have a little strength, and he sees it. He has opened a door no one can shut. Walk through it."},{"id":"revelation-3-11","hl":"Hold that fast which thou hast","ref":"Revelation 3:11","who":"Jesus","th":"build","to":"to the church in Philadelphia","v":[{"n":11,"r":[["Behold, I come quickly:",1],[" hold that fast which thou hast",2],[", that no man take thy crown.",1]]}],"s":"Jesus tells the same church that he is coming soon. Hold on to what you have, so no one takes your crown.","p":"Hold on to what you have built. Don’t let anyone talk you out of your crown."},{"id":"revelation-2-10","hl":"Be thou faithful unto death","ref":"Revelation 2:10","who":"Jesus","th":"build","to":"to the church in Smyrna","v":[{"n":10,"r":[["Fear none of those things which thou shalt suffer: behold, the devil shall cast some of you into prison, that ye may be tried; and ye shall have tribulation ten days:",1],[" be thou faithful unto death",2],[", and I will give thee a crown of life.",1]]}],"s":"Jesus warns the church in Smyrna that suffering and prison are coming. He tells them to stay faithful even to death, and promises them the crown of life.","p":"It might get hard before it gets good. Stay faithful. The crown is real."},{"id":"revelation-3-21","hl":"To him that overcometh","ref":"Revelation 3:21","who":"Jesus","th":"build","to":"to the church of the Laodiceans","v":[{"n":21,"r":[["To him that overcometh",2],[" will I grant to sit with me in my throne, even as I also overcame, and am set down with my Father in his throne.",1]]}],"s":"Jesus promises that whoever overcomes will sit with him on his throne, just as he overcame and sat down with his Father.","p":"Overcome. That is the whole assignment, and there is a throne at the end of it."},{"id":"matthew-10-22","hl":"He that endureth to the end shall be saved","ref":"Matthew 10:22","who":"Jesus","th":"build","to":"to the twelve","v":[{"n":22,"r":[["And ye shall be hated of all men for my name’s sake: but",1],[" he that endureth to the end shall be saved",2],[".",1]]}],"s":"Jesus warns the twelve that people will hate them because of him. But the one who keeps going to the end will be saved.","p":"Some people won’t like you. Keep going anyway. The one who endures to the end wins."},{"id":"psalms-46-10","hl":"Be still, and know that I am God","ref":"Psalm 46:10","who":"God","th":"peace","to":"to all the earth","v":[{"n":10,"r":[["Be still, and know that I am God",2],[": I will be exalted among the heathen, I will be exalted in the earth.",1]]}],"s":"In the middle of war and chaos, God says: stop, be still, and know that I am God. He will be honoured over all the earth.","p":"Stop for a moment. Breathe. Be still and know that he is God, and you are not carrying the world."},{"id":"exodus-33-14","hl":"My presence shall go with thee","ref":"Exodus 33:14","who":"God","th":"peace","to":"to Moses","v":[{"n":14,"r":[["And he said,",0],[" My presence shall go with thee",2],[", and I will give thee rest.",1]]}],"s":"Moses was worried about leading the people any further. God promised that his presence would go with him, and that he would give him rest.","p":"Wherever you go next, his presence goes with you. And he gives rest."},{"id":"isaiah-46-4","hl":"Even to hoar hairs will I carry you","ref":"Isaiah 46:4","who":"God","th":"peace","to":"to Israel","v":[{"n":4,"r":[["And even to your old age I am he; and",1],[" even to hoar hairs will I carry you",2],[": I have made, and I will bear; even I will carry, and will deliver you.",1]]}],"s":"God promises to carry his people all the way to old age and grey hair. He made them, he will carry them, and he will rescue them.","p":"He has carried you this far, and he will carry you all the way to grey hair. You don’t have to hold yourself up."},{"id":"isaiah-54-10","hl":"My kindness shall not depart from thee","ref":"Isaiah 54:10","who":"God","th":"peace","to":"to Zion","v":[{"n":10,"r":[["For the mountains shall depart, and the hills be removed; but",1],[" my kindness shall not depart from thee",2],[", neither shall the covenant of my peace be removed, saith the LORD that hath mercy on thee.",1]]}],"s":"God says the mountains could disappear and the hills could move, but his kindness and his promise of peace will never leave his people.","p":"Mountains can shake. His kindness toward you won’t."},{"id":"psalms-50-15","hl":"Call upon me in the day of trouble","ref":"Psalm 50:15","who":"God","th":"peace","to":"to his people","v":[{"n":15,"r":[["And",1],[" call upon me in the day of trouble",2],[": I will deliver thee, and thou shalt glorify me.",1]]}],"s":"God invites his people to call on him when trouble comes. He will rescue them, and they will give him the glory.","p":"Call on him in the day of trouble, even if that day is today. He will deliver you."},{"id":"matthew-11-28","hl":"Come unto me","ref":"Matthew 11:28","who":"Jesus","th":"peace","to":"to all who labour","v":[{"n":28,"r":[["Come unto me",2],[", all ye that labour and are heavy laden, and I will give you rest.",1]]}],"s":"Jesus invites everyone who is worn out and weighed down to come to him. He promises to give them rest.","p":"You’re tired, Otti. Come to him. Rest is a promise, not a prize you have to earn."},{"id":"matthew-6-34","hl":"Take therefore no thought for the morrow","ref":"Matthew 6:34","who":"Jesus","th":"peace","to":"on the mount","v":[{"n":34,"r":[["Take therefore no thought for the morrow",2],[": for the morrow shall take thought for the things of itself. Sufficient unto the day is the evil thereof.",1]]}],"s":"Jesus says not to worry about tomorrow. Tomorrow will take care of itself, and each day has enough trouble of its own.","p":"Tomorrow can worry about itself. Just handle today."},{"id":"matthew-6-33","hl":"Seek ye first the kingdom of God","ref":"Matthew 6:33","who":"Jesus","th":"peace","to":"on the mount","v":[{"n":33,"r":[["But",1],[" seek ye first the kingdom of God",2],[", and his righteousness; and all these things shall be added unto you.",1]]}],"s":"Jesus says to put God’s kingdom and his ways first. Then everything else you need will be added to you.","p":"Put him first and stop chasing everything else. It will be added."},{"id":"john-14-1","hl":"Let not your heart be troubled","ref":"John 14:1","who":"Jesus","th":"peace","to":"to the disciples","v":[{"n":1,"r":[["Let not your heart be troubled",2],[": ye believe in God, believe also in me.",1]]}],"s":"On the night before he died, Jesus told his worried disciples not to let their hearts be troubled. Trust God, and trust him too.","p":"Don’t let your heart be troubled. Trust God. Trust him."},{"id":"john-14-27","hl":"Peace I leave with you","ref":"John 14:27","who":"Jesus","th":"peace","to":"to the disciples","v":[{"n":27,"r":[["Peace I leave with you",2],[", my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid.",1]]}],"s":"Jesus gives his disciples his own peace, which is different from the peace the world offers. So there is no need to be troubled or afraid.","p":"The peace he gives is not the kind the world sells. Take it, and don’t be afraid."},{"id":"john-16-33","hl":"Be of good cheer; I have overcome the world","ref":"John 16:33","who":"Jesus","th":"peace","to":"to the disciples","v":[{"n":33,"r":[["These things I have spoken unto you, that in me ye might have peace. In the world ye shall have tribulation: but",1],[" be of good cheer; I have overcome the world",2],[".",1]]}],"s":"Jesus is honest: in this world you will have trouble. But take heart, because he has already overcome the world.","p":"Yes, there will be trouble. He told you so. But cheer up: he has overcome the world."},{"id":"mark-4-39","hl":"Peace, be still","ref":"Mark 4:39","who":"Jesus","th":"peace","to":"to the wind and the sea","v":[{"n":39,"r":[["And he arose, and rebuked the wind, and said unto the sea,",0],[" Peace, be still",2],[".",1],[" And the wind ceased, and there was a great calm.",0]]}],"s":"A storm was filling the boat with water. Jesus stood up and told the wind and the waves to be quiet, and everything went completely calm.","p":"Whatever is raging around you tonight, he can say two words to it: peace, be still."},{"id":"2-corinthians-12-9","hl":"My grace is sufficient for thee","ref":"2 Corinthians 12:9","who":"Jesus","th":"peace","to":"to Paul","v":[{"n":9,"r":[["And he said unto me,",0],[" My grace is sufficient for thee",2],[": for my strength is made perfect in weakness.",1],[" Most gladly therefore will I rather glory in my infirmities, that the power of Christ may rest upon me.",0]]}],"s":"Paul begged three times for a painful problem to be taken away. Jesus answered that his grace is enough, and his power shows best through weakness.","p":"You feel weak. That is exactly where his strength shows up best. His grace is enough for you."},{"id":"john-14-18","hl":"I will not leave you comfortless","ref":"John 14:18","who":"Jesus","th":"peace","to":"to the disciples","v":[{"n":18,"r":[["I will not leave you comfortless",2],[": I will come to you.",1]]}],"s":"Jesus promises he will not leave his followers alone like orphans. He will come back to them.","p":"You are not an orphan. He has not left you. He is coming."},{"id":"matthew-28-20","hl":"Lo, I am with you alway","ref":"Matthew 28:20","who":"Jesus","th":"peace","to":"to the eleven","v":[{"n":20,"r":[["Teaching them to observe all things whatsoever I have commanded you: and,",1],[" lo, I am with you alway",2],[", even unto the end of the world. Amen.",1]]}],"s":"These are Jesus’ last words in Matthew. After sending his followers out into the world, he promises to be with them always, to the very end.","p":"Always. Every day. To the very end. You are never doing this alone."},{"id":"john-10-10","hl":"That they might have life","ref":"John 10:10","who":"Jesus","th":"peace","to":"to his hearers","v":[{"n":10,"r":[["The thief cometh not, but for to steal, and to kill, and to destroy: I am come",1],[" that they might have life",2],[", and that they might have it more abundantly.",1]]}],"s":"Jesus compares himself with a thief who only comes to steal, kill and destroy. He came so that people can have life, and life to the full.","p":"The thief came to take. Jesus came so you could live, and live to the full. Don’t settle for less."},{"id":"jeremiah-1-5","hl":"Before I formed thee in the belly I knew thee","ref":"Jeremiah 1:5","who":"God","th":"seen","to":"to Jeremiah","v":[{"n":5,"r":[["Before I formed thee in the belly I knew thee",2],["; and before thou camest forth out of the womb I sanctified thee, and I ordained thee a prophet unto the nations.",1]]}],"s":"God tells Jeremiah that he knew him before he was born and set him apart for a purpose before he took his first breath.","p":"Before you were born, he knew you. You were made on purpose, for a purpose."},{"id":"jeremiah-29-11","hl":"Thoughts of peace, and not of evil","ref":"Jeremiah 29:11","who":"God","th":"seen","to":"to the exiles in Babylon","v":[{"n":11,"r":[["For I know the thoughts that I think toward you, saith the LORD,",1],[" thoughts of peace, and not of evil",2],[", to give you an expected end.",1]]}],"s":"God’s people were stuck in exile in Babylon for 70 years. God told them his plans for them were for peace, not harm, and that he would give them a future.","p":"Even in the long wait, his thoughts toward you are peace, not evil. Your story has a good end."},{"id":"jeremiah-29-13","hl":"Ye shall seek me, and find me","ref":"Jeremiah 29:13","who":"God","th":"seen","to":"to the exiles in Babylon","v":[{"n":13,"r":[["And",1],[" ye shall seek me, and find me",2],[", when ye shall search for me with all your heart.",1]]}],"s":"God promises the exiles that when they search for him with all their heart, they will find him.","p":"Search for him with all your heart, Otti. You will find him."},{"id":"jeremiah-31-3","hl":"I have loved thee with an everlasting love","ref":"Jeremiah 31:3","who":"God","th":"seen","to":"to Israel","v":[{"n":3,"r":[["The LORD hath appeared of old unto me, saying,",0],[" Yea,",1],[" I have loved thee with an everlasting love",2],[": therefore with lovingkindness have I drawn thee.",1]]}],"s":"God tells his people that he has loved them with a love that never ends, and that this love is what drew them back to him.","p":"You are loved with a love that does not run out. That is what keeps drawing you back."},{"id":"isaiah-43-4","hl":"Thou wast precious in my sight","ref":"Isaiah 43:4","who":"God","th":"seen","to":"to Israel","v":[{"n":4,"r":[["Since",1],[" thou wast precious in my sight",2],[", thou hast been honourable, and I have loved thee: therefore will I give men for thee, and people for thy life.",1]]}],"s":"God tells Israel that they are precious in his sight and honoured, and that he loves them.","p":"You are precious to him. Honoured. Loved. Read that again."},{"id":"isaiah-49-15","hl":"Yet will I not forget thee","ref":"Isaiah 49:15–16","who":"God","th":"seen","to":"to Zion","v":[{"n":15,"r":[["Can a woman forget her sucking child, that she should not have compassion on the son of her womb? yea, they may forget,",1],[" yet will I not forget thee",2],[".",1]]},{"n":16,"r":[["Behold, I have graven thee upon the palms of my hands; thy walls are continually before me.",1]]}],"s":"Zion felt forgotten by God. God says a mother might forget her nursing baby, but he will never forget you. Your name is engraved on the palms of his hands.","p":"You are not forgotten. You are written on the palms of his hands."},{"id":"1-samuel-16-7","hl":"The LORD looketh on the heart","ref":"1 Samuel 16:7","who":"God","th":"seen","to":"to Samuel","v":[{"n":7,"r":[["But the LORD said unto Samuel,",0],[" Look not on his countenance, or on the height of his stature; because I have refused him: for the LORD seeth not as man seeth; for man looketh on the outward appearance, but",1],[" the LORD looketh on the heart",2],[".",1]]}],"s":"Samuel thought Jesse’s tall eldest son must be the next king. God said people look at the outside, but he looks at the heart. He chose the youngest son, David.","p":"People judge you by the outside. God looks at your heart. That is the only review that matters."},{"id":"psalms-91-15","hl":"I will be with him in trouble","ref":"Psalm 91:15","who":"God","th":"seen","to":"of the one who calls on him","v":[{"n":15,"r":[["He shall call upon me, and I will answer him:",1],[" I will be with him in trouble",2],["; I will deliver him, and honour him.",1]]}],"s":"God speaks about the person who loves him: when that person calls, God will answer, stay with them in trouble, rescue them and honour them.","p":"When you call, he answers. In trouble, he is right there with you."},{"id":"psalms-32-8","hl":"I will guide thee with mine eye","ref":"Psalm 32:8","who":"God","th":"seen","to":"to the one who prays","v":[{"n":8,"r":[["I will instruct thee and teach thee in the way which thou shalt go:",1],[" I will guide thee with mine eye",2],[".",1]]}],"s":"God promises to teach and guide the one who turns to him, keeping his eye on them every step of the way.","p":"You don’t have to work out every step. He will teach you, and he is watching where you go."},{"id":"revelation-21-5","hl":"Behold, I make all things new","ref":"Revelation 21:5","who":"God","th":"seen","to":"to John","v":[{"n":5,"r":[["And he that sat upon the throne said,",0],[" Behold, I make all things new",2],[".",1],[" And he said unto me, Write: for these words are true and faithful.",0]]}],"s":"Near the end of the Bible, God on his throne declares that he is making all things new. He tells John to write it down because it is true.","p":"He makes all things new. Even you. Even this."},{"id":"ezekiel-36-26","hl":"A new heart also will I give you","ref":"Ezekiel 36:26","who":"God","th":"seen","to":"to Israel","v":[{"n":26,"r":[["A new heart also will I give you",2],[", and a new spirit will I put within you: and I will take away the stony heart out of your flesh, and I will give you an heart of flesh.",1]]}],"s":"God promises to take away a hard, stone-cold heart and give his people a living heart and a new spirit.","p":"If your heart has gone cold or hard, ask for a new one. He gives them."},{"id":"zechariah-9-12","hl":"Ye prisoners of hope","ref":"Zechariah 9:12","who":"God","th":"seen","to":"to Zion","v":[{"n":12,"r":[["Turn you to the strong hold,",1],[" ye prisoners of hope",2],[": even to day do I declare that I will render double unto thee",1],["…",1]]}],"s":"God calls his scattered people “prisoners of hope” and tells them to come back to safety. He promises to give back double what they lost.","p":"You are a prisoner of hope, Otti. Hope has you. Come back to the stronghold."},{"id":"genesis-28-15","hl":"I will not leave thee","ref":"Genesis 28:15","who":"God","th":"seen","to":"to Jacob, at Bethel","v":[{"n":15,"r":[["And, behold, I am with thee, and will keep thee in all places whither thou goest, and will bring thee again into this land; for",1],[" I will not leave thee",2],[", until I have done that which I have spoken to thee of.",1]]}],"s":"Jacob was running from his brother and sleeping on a stone. God promised to be with him everywhere, bring him home, and not leave him until every promise was kept.","p":"Wherever you are sleeping tonight, he is with you, and he won’t leave until every promise is kept."},{"id":"luke-12-7","hl":"The very hairs of your head are all numbered","ref":"Luke 12:7","who":"Jesus","th":"seen","to":"to the disciples","v":[{"n":7,"r":[["But even",1],[" the very hairs of your head are all numbered",2],[". Fear not therefore: ye are of more value than many sparrows.",1]]}],"s":"Jesus says God knows you so closely that every hair on your head is counted. So don’t be afraid: you are worth more than many sparrows.","p":"Every hair on your head is counted. He knows you that well. Don’t be afraid."},{"id":"luke-22-32","hl":"I have prayed for thee, that thy faith fail not","ref":"Luke 22:32","who":"Jesus","th":"seen","to":"to Simon Peter","v":[{"n":32,"r":[["But",1],[" I have prayed for thee, that thy faith fail not",2],[": and when thou art converted, strengthen thy brethren.",1]]}],"s":"Jesus knew Peter would deny him that night. He told Peter he had prayed that his faith would not fail, and that once he came back, he should strengthen the others.","p":"Even when you fall, he has already prayed for you. When you get back up, help someone else up."},{"id":"john-15-16","hl":"I have chosen you","ref":"John 15:16","who":"Jesus","th":"seen","to":"to the disciples","v":[{"n":16,"r":[["Ye have not chosen me, but",1],[" I have chosen you",2],[", and ordained you, that ye should go and bring forth fruit, and that your fruit should remain: that whatsoever ye shall ask of the Father in my name, he may give it you.",1]]}],"s":"Jesus tells his disciples they did not choose him; he chose them. He appointed them to go and bear fruit that lasts.","p":"You didn’t choose him first. He chose you, to go and bear fruit that lasts."},{"id":"john-8-36","hl":"Ye shall be free indeed","ref":"John 8:36","who":"Jesus","th":"seen","to":"to those who believed him","v":[{"n":36,"r":[["If the Son therefore shall make you free,",1],[" ye shall be free indeed",2],[".",1]]}],"s":"Jesus says that if the Son sets you free, you are truly free.","p":"Free indeed. Not almost free. Live like it."}],"feelings":[{"k":"season","title":"For a hard season","re":"\\b(was|were|been|used to be)\\b.{0,30}\\b(great|good|well|fine|amazing|better|flourishing|thriving|on top)\\b|\\bused to\\b|\\bnot like before\\b|\\bfell off\\b|\\bfalling off\\b|\\bdownhill\\b|\\bgoing down\\b|everything\\b.{0,25}\\b(not good|bad|wrong|off|hard|dry|falling|down|scattered|collapsing)|\\bnothing (is |seems to be )?(working|going right|good)\\b|\\b(bad|dry|hard|tough|rough|dark) (season|time|times|patch|year|phase)\\b|\\bsetback|\\bnot good anymore\\b|\\blife (is|has been) (hard|bad|tough|unfair)\\b|\\bthings (are|have been|got) (bad|hard|worse)\\b|\\bgetting worse\\b","say":"Seasons change. God has a lot to say about what comes after a dry one.","ids":["joel-2-25","isaiah-43-18","jeremiah-29-11","1-samuel-16-1","revelation-21-5","zechariah-9-12","isaiah-60-1","luke-5-4","isaiah-54-10","john-16-33","psalms-50-15","habakkuk-2-2"],"also":["stuck","waiting","tired"],"pray":[["Father, thank you that this season is not the end of my story. Your thoughts toward me are thoughts of peace and not of evil.","Jeremiah 29:11","jeremiah-29-11"],["Lord, restore to me every year the locust has eaten, and give back what this season took from me.","Joel 2:25","joel-2-25"],["I let go of the former things. Father, do a new thing in my life and make a way in my wilderness.","Isaiah 43:18–19","isaiah-43-18"],["Father, I am a prisoner of hope. Render double to me for every loss, in Jesus’ name.","Zechariah 9:12","zechariah-9-12"]]},{"k":"stuck","title":"For feeling stuck","re":"\\b(stuck|lazy|procrastinat|unmotivated|motivat|stagnat|plateau|slack)|\\bsame (position|place|spot|level|stage|thing|situation|point|job|room)\\b|\\bno (progress|growth|movement|improvement)\\b|\\bnot (progressing|growing|moving|improving|changing)\\b|\\bnothing (changes|has changed|is changing|changed|moves)\\b|\\b(going|walking|moving) in circles\\b|\\bcan'?t (start|move|get up|get out)\\b|\\bhaven'?t (moved|grown|changed)\\b|\\bdistract|\\bwast(e|ed|ing) (my )?(time|years|life)\\b|\\bgoing nowhere\\b|\\bcomfort zone\\b|\\bwhere i was\\b|\\bstill (here|at|in the same)\\b","say":"Feeling stuck is real, but you don’t have to stay there. Read these, then move.","ids":["deuteronomy-2-3","deuteronomy-1-6","exodus-14-15","joshua-7-10","john-5-8","isaiah-43-18","joshua-1-3","judges-6-14","luke-5-4","matthew-14-29","john-4-35","john-9-4","ezekiel-2-1","isaiah-60-1"],"also":["build","giveup"],"pray":[["Lord, I have gone around this mountain long enough. Turn me and move me forward this season.","Deuteronomy 2:3","deuteronomy-2-3"],["Father, break every cycle of delay and standing still in my life. Give me grace to rise, take up my bed and walk.","John 5:8","john-5-8"],["Lord, give me courage to step out, and let every place the sole of my foot treads be given to me.","Joshua 1:3","joshua-1-3"],["Father, when you say go forward, let me not stand still. Speak, and I will move, in Jesus’ name.","Exodus 14:15","exodus-14-15"]]},{"k":"waiting","title":"For the long wait","re":"\\b(wait|slow|delay|patien)|\\btaking (so |too )?long\\b|\\b(so|too|very) long\\b|\\blong time\\b|\\bhow long\\b|\\bwhen will\\b|\\bstill nothing\\b|\\bnothing (is )?happening\\b|\\bnot working\\b|\\b(\\d+|one|two|three|four|five|six|seven|eight|nine|ten|several|many|few) (years?|yrs|months?)\\b|\\bfor years\\b|\\bfor months\\b","say":"Waiting is hard, especially for this long. Here is what God said about things that take time.","ids":["habakkuk-2-2","isaiah-60-22","genesis-15-1","jeremiah-29-11","zechariah-9-12","isaiah-65-24","psalms-46-10","isaiah-46-4","genesis-28-15","john-11-40"],"also":["doubt"],"pray":[["Father, help me write the vision and make it plain, and give me patience to wait for it, because it will surely come.","Habakkuk 2:2–3","habakkuk-2-2"],["Lord, you said a little one shall become a thousand. Hasten your word over my life in its time.","Isaiah 60:22","isaiah-60-22"],["Father, while I wait, be my shield and my exceeding great reward.","Genesis 15:1","genesis-15-1"],["Lord, keep my faith alive while I wait, and let me see your glory, in Jesus’ name.","John 11:40","john-11-40"]]},{"k":"giveup","title":"Before you quit","re":"\\b(give up|giving up|gave up|quit|hopeless|no hope|pointless|what'?s the point|done with|tired of trying|can'?t do this|cannot do this|throw in the towel)","say":"Before you quit anything, read these.","ids":["revelation-2-10","matthew-10-22","luke-5-4","jeremiah-12-5","revelation-3-11","habakkuk-2-2","revelation-3-21","haggai-2-4","2-corinthians-12-9"],"pray":[["Father, give me strength to stay faithful, and do not let me quit before I receive the crown.","Revelation 2:10","revelation-2-10"],["Lord, give me grace to endure to the end and finish what you started in me.","Matthew 10:22","matthew-10-22"],["Father, where I have toiled all night and caught nothing, help me let down my net again at your word.","Luke 5:4","luke-5-4"],["Lord, I hold fast what I have. Let no man take my crown, in Jesus’ name.","Revelation 3:11","revelation-3-11"]]},{"k":"afraid","title":"For when you’re scared","re":"\\b(scared|afraid|fear|frighten|anxious|anxiety|nervous|panic|terrified|shaking|scary)","say":"Fear is loud right now. Here is what God said to people who were scared.","ids":["isaiah-41-10","joshua-1-9","mark-5-36","2-chronicles-20-15","isaiah-43-1","matthew-14-27","isaiah-41-13","luke-12-32","matthew-10-31","revelation-1-17","matthew-8-26","genesis-15-1"],"pray":[["Father, I will not fear, because you are with me. Strengthen me, help me and uphold me with your right hand.","Isaiah 41:10","isaiah-41-10"],["Lord, I receive courage today. Wherever I go, let me know that you are with me.","Joshua 1:9","joshua-1-9"],["Father, I hand you every battle in front of me, because the battle is not mine but yours.","2 Chronicles 20:15","2-chronicles-20-15"],["Lord, when the storm is loud, let me hear you say, “It is I; be not afraid,” in Jesus’ name.","Matthew 14:27","matthew-14-27"]]},{"k":"worried","title":"For a worried mind","re":"\\b(worr|overthink|over-think|uncertain|unsure)|\\bfuture\\b|\\btomorrow\\b|\\bwhat if\\b|\\bwhat will happen\\b|\\bcan'?t sleep\\b","say":"Your mind is running ahead into tomorrow. Here is what Jesus said about that.","ids":["matthew-6-34","john-14-1","john-14-27","matthew-6-33","psalms-46-10","jeremiah-29-11","isaiah-65-24","john-16-33","isaiah-41-13"],"pray":[["Father, I give you tomorrow. Help me take no thought for the morrow and live today well.","Matthew 6:34","matthew-6-34"],["Lord, take every troubled thought from my heart and give me the peace you promised.","John 14:27","john-14-27"],["Father, help me seek your kingdom first, and add to me everything I need.","Matthew 6:33","matthew-6-33"],["Lord, quiet my mind. Let me be still and know that you are God, in Jesus’ name.","Psalm 46:10","psalms-46-10"]]},{"k":"tired","title":"For when you’re tired","re":"\\b(tired|exhaust|weak|drained|weary|fatigue|burnout)|\\bburn(t|ed)? ?out\\b|\\bno (strength|energy)\\b|\\bworn out\\b","say":"Sounds like you are running on empty. These were spoken to tired people.","ids":["matthew-11-28","isaiah-46-4","2-corinthians-12-9","exodus-33-14","isaiah-41-10","psalms-46-10","mark-4-39","john-14-27","haggai-2-4"],"pray":[["Lord Jesus, I come to you tired and heavy laden. Give me the rest you promised.","Matthew 11:28","matthew-11-28"],["Father, let your grace be sufficient for me, and let your strength be made perfect in my weakness.","2 Corinthians 12:9","2-corinthians-12-9"],["Lord, carry me as you promised, from today all the way to grey hairs.","Isaiah 46:4","isaiah-46-4"],["Father, let your presence go with me, and give me rest, in Jesus’ name.","Exodus 33:14","exodus-33-14"]]},{"k":"broke","title":"For when money is tight","re":"\\b(broke|money|poor|debt|funds|cash|salary|liquidat|portfolio|financ|income|job|jobless|unemploy|business is)|\\bbills?\\b|\\brent\\b|\\brug(ged|pull)?\\b|\\blost (money|everything|my savings)\\b|\\bred candles?\\b|\\bdumped\\b|\\bbag(s|holder)?\\b","say":"Money pressure is heavy. Here is what God said about provision and building again.","ids":["joel-2-25","isaiah-48-17","matthew-6-33","psalms-81-10","zechariah-4-10","luke-16-10","isaiah-60-22","isaiah-45-2","genesis-12-2","matthew-25-21"],"pray":[["Father, you are the God who teaches me to profit. Teach me, and lead me in the way I should go with my money and my work.","Isaiah 48:17","isaiah-48-17"],["Lord, restore every financial loss and every year that was eaten.","Joel 2:25","joel-2-25"],["Father, I open my mouth wide. Fill it with provision.","Psalm 81:10","psalms-81-10"],["Lord, make me faithful with little, so that you can trust me with much, in Jesus’ name.","Luke 16:10","luke-16-10"]]},{"k":"failed","title":"For after a loss","re":"\\b(fail|mistake|screwed|regret|ruin|defeat)|\\bmess(ed)? up\\b|\\bbehind\\b|\\bloss(es)?\\b|\\blost\\b|\\bblew it\\b|\\blet (myself|everyone|them|people|my family) down\\b","say":"One loss does not end your story. Here is what God said to people after they fell.","ids":["joshua-7-10","joel-2-25","luke-22-32","luke-5-4","isaiah-43-18","isaiah-54-4","1-samuel-16-1","revelation-21-5","john-8-36","ezekiel-36-26"],"pray":[["Father, I get up from the floor today. Show me what went wrong and give me grace to fix it.","Joshua 7:10","joshua-7-10"],["Lord, thank you for praying that my faith will not fail. Strengthen me so I can strengthen others.","Luke 22:32","luke-22-32"],["Father, take away the shame of my past mistakes, and let me forget it.","Isaiah 54:4","isaiah-54-4"],["Lord, make all things new in my life, starting today, in Jesus’ name.","Revelation 21:5","revelation-21-5"]]},{"k":"compare","title":"When others seem ahead","re":"\\b(everyone|everybody|others|friends|people|my mates|my peers|they)\\b.{0,25}\\b(ahead|winning|doing better|making it|moving|progressing|growing|rich|succeed)|\\bjealous|\\benv(y|ious)\\b|\\bcompar|\\bleft behind\\b","say":"It is hard to watch other people move while you feel still. Your race is your own.","ids":["1-samuel-16-7","zechariah-4-10","isaiah-60-22","john-15-16","matthew-25-21","jeremiah-1-5","revelation-3-8"],"pray":[["Father, thank you that you look on the heart, not the outward appearance. Let me measure my life by you, not by people.","1 Samuel 16:7","1-samuel-16-7"],["Lord, help me not to despise my small beginnings.","Zechariah 4:10","zechariah-4-10"],["Father, you chose me and ordained me to bear fruit that remains. Let my fruit show in its time.","John 15:16","john-15-16"],["Lord, make me faithful over the few things you have given me, until you make me ruler over many, in Jesus’ name.","Matthew 25:21","matthew-25-21"]]},{"k":"alone","title":"For when you feel alone","re":"\\b(alone|lonel|forgotten|ignored|unseen|abandon|isolat)|\\bnobody\\b|\\bno one\\b|\\bleft out\\b|\\bno friends\\b|\\bby myself\\b","say":"You are not as alone as it feels. Read these slowly.","ids":["isaiah-49-15","matthew-28-20","john-14-18","genesis-28-15","joshua-1-5","luke-12-7","exodus-33-14","psalms-91-15","isaiah-41-13"],"pray":[["Father, thank you that you have not forgotten me. I am graven on the palms of your hands.","Isaiah 49:15–16","isaiah-49-15"],["Lord Jesus, thank you that you are with me always, even to the end.","Matthew 28:20","matthew-28-20"],["Father, do not leave me comfortless. Come to me in this lonely season.","John 14:18","john-14-18"],["Lord, keep me in every place I go, and send the right people into my life, in Jesus’ name.","Genesis 28:15","genesis-28-15"]]},{"k":"unloved","title":"For when you feel unwanted","re":"\\b(reject|unloved|ugly|worthless|unwanted|unappreciated|useless)|\\bnot loved\\b|\\bnobody (loves|cares)\\b|\\bno one (loves|cares)\\b|\\bnot wanted\\b|\\bnot valued\\b|\\bnot good enough\\b|\\bhate myself\\b","say":"Whatever told you that you are not enough, here is what God says about you.","ids":["jeremiah-31-3","isaiah-43-4","1-samuel-16-7","john-15-16","jeremiah-1-5","isaiah-49-15","luke-12-7","matthew-10-31","isaiah-43-1"],"pray":[["Father, thank you for loving me with an everlasting love.","Jeremiah 31:3","jeremiah-31-3"],["Lord, help me believe that I am precious and honourable in your sight.","Isaiah 43:4","isaiah-43-4"],["Father, uproot every lie that says I am not enough. You knew me before you formed me.","Jeremiah 1:5","jeremiah-1-5"],["Lord, thank you for choosing me. Help me live like someone chosen, in Jesus’ name.","John 15:16","john-15-16"]]},{"k":"sad","title":"For when it hurts","re":"\\b(sad|depress|heartbr|hurt|cry|crying|grief|griev|mourn|pain|miserable|unhappy|sorrow)|\\bdown\\b|\\blow\\b|\\bbroken\\b|\\bempty\\b|\\bnot (ok|okay|fine|happy)\\b|\\bnot good\\b","say":"I’m sorry it hurts right now. These were spoken to people in pain.","ids":["matthew-11-28","john-16-33","isaiah-54-10","psalms-91-15","revelation-21-5","psalms-50-15","john-14-27","isaiah-43-1","mark-4-39"],"pray":[["Lord Jesus, I bring you this pain. Give rest to my soul.","Matthew 11:28","matthew-11-28"],["Father, let your kindness not depart from me, even when everything around me shakes.","Isaiah 54:10","isaiah-54-10"],["Lord, be with me in this trouble. Deliver me and honour me.","Psalm 91:15","psalms-91-15"],["Father, make all things new and turn this sorrow around, in Jesus’ name.","Revelation 21:5","revelation-21-5"]]},{"k":"doubt","title":"For when you doubt","re":"\\b(doubt|unbeli)|\\bdon'?t believe\\b|\\bcan'?t believe\\b|\\bfaith\\b|\\bis god real\\b|\\bwhere is god\\b|\\bgod (has )?(forgotten|left|abandoned)\\b|\\bdoes god (care|hear|see)\\b|\\bquestion","say":"Doubt happens. Here is what Jesus told people who were struggling to believe.","ids":["mark-9-23","john-20-27","mark-11-22","matthew-17-20","genesis-18-14","john-11-40","jeremiah-32-27","matthew-19-26","mark-11-24"],"pray":[["Lord, I believe; help thou mine unbelief.","Mark 9:24",null],["Father, grow my faith, even if it starts as small as a grain of mustard seed.","Matthew 17:20","matthew-17-20"],["Lord, let me not be faithless, but believing.","John 20:27","john-20-27"],["Father, nothing is too hard for you. Do what looks impossible in my life, in Jesus’ name.","Jeremiah 32:27","jeremiah-32-27"]]},{"k":"small","title":"For when you feel small","re":"\\b(inexperienced|imposter|impostor|unqualified|insignificant|inadequate)|\\bsmall\\b|\\blittle\\b|\\bnot enough\\b|\\btoo young\\b|\\bordinary\\b|\\bnobody knows me\\b|\\ba nobody\\b","say":"God has a long history of using people who felt exactly like this.","ids":["jeremiah-1-7","judges-6-14","zechariah-4-10","isaiah-60-22","revelation-3-8","exodus-4-12","isaiah-41-15","1-samuel-16-7","luke-12-32","matthew-5-14"],"pray":[["Father, I will not say “I am a child” or “I am too small.” Send me, and I will go.","Jeremiah 1:7","jeremiah-1-7"],["Lord, I will not despise my small beginnings. Grow what you started.","Zechariah 4:10","zechariah-4-10"],["Father, make me a new sharp threshing instrument that threshes the mountains in front of me.","Isaiah 41:15","isaiah-41-15"],["Lord, as you sent Gideon, send me in the strength I already have, in Jesus’ name.","Judges 6:14","judges-6-14"]]},{"k":"overwhelmed","title":"For when it’s too much","re":"\\b(overwhelm|stress|chaos|swamped|drowning)|\\btoo much\\b|\\bpressure\\b|\\bbusy\\b|\\bcan'?t cope\\b|\\bso many things\\b","say":"That is a lot to carry. Put some of it down here.","ids":["psalms-46-10","mark-4-39","2-chronicles-20-15","2-chronicles-20-17","matthew-11-28","john-14-27","2-corinthians-12-9","matthew-6-34"],"pray":[["Lord, speak to every storm in my life: peace, be still.","Mark 4:39","mark-4-39"],["Father, I hand you this battle. It is not mine but yours.","2 Chronicles 20:15","2-chronicles-20-15"],["Lord Jesus, I come to you with this load. Give me rest.","Matthew 11:28","matthew-11-28"],["Father, help me be still and know that you are God, in Jesus’ name.","Psalm 46:10","psalms-46-10"]]},{"k":"attacked","title":"When people come against you","re":"\\b(mock|enem|attack|betray|gossip|insult|disrespect|slander)|\\bhate(d|rs?)?\\b|\\btalking about me\\b|\\bbull(y|ied)\\b|\\bagainst me\\b|\\blaugh(ed|ing)? at me\\b","say":"People coming against you hurts. Here is what God says about that.","ids":["isaiah-54-17","jeremiah-1-8","matthew-10-22","acts-18-9","isaiah-45-2","2-chronicles-20-15","1-samuel-16-7"],"pray":[["Father, no weapon formed against me shall prosper, and every tongue that rises against me shall be condemned.","Isaiah 54:17","isaiah-54-17"],["Lord, deliver me, and let me not be afraid of their faces.","Jeremiah 1:8","jeremiah-1-8"],["Father, go before me and break every gate of brass and bar of iron in my way.","Isaiah 45:2–3","isaiah-45-2"],["Lord, give me boldness to keep speaking and building. Let no man set on me to hurt me, in Jesus’ name.","Acts 18:9–10","acts-18-9"]]},{"k":"direction","title":"For when you need direction","re":"\\b(confus|direction|decision|clueless|purpose|choose)|\\bdon'?t know what to do\\b|\\bwhich way\\b|\\blost my way\\b|\\bwhat next\\b|\\bwhat to do\\b|\\bwhat should i\\b|\\bwhere (do|should) i go\\b","say":"Not knowing which way to go is hard. These are about direction.","ids":["psalms-32-8","isaiah-48-17","jeremiah-33-3","1-kings-3-5","jeremiah-29-13","matthew-6-33","exodus-14-15","matthew-7-7"],"pray":[["Father, instruct me and teach me in the way I should go. Guide me with your eye.","Psalm 32:8","psalms-32-8"],["Lord, I call to you. Answer me and show me great and mighty things I do not know.","Jeremiah 33:3","jeremiah-33-3"],["Father, give me wisdom, the way you gave it to Solomon when he asked.","1 Kings 3:5","1-kings-3-5"],["Lord, as I seek you with all my heart, let me find you and your way for me, in Jesus’ name.","Jeremiah 29:13","jeremiah-29-13"]]},{"k":"shame","title":"For guilt and shame","re":"\\b(guilt|ashamed|shame|embarrass|unworthy|forgive|sinned|dirty)\\b","say":"Shame does not get the last word. Here is what God says about that.","ids":["isaiah-54-4","john-8-36","ezekiel-36-26","revelation-21-5","isaiah-43-18","luke-22-32","jeremiah-31-3"],"pray":[["Father, take away my shame, and let me forget the shame of my past.","Isaiah 54:4","isaiah-54-4"],["Lord Jesus, make me free, so that I am free indeed.","John 8:36","john-8-36"],["Father, give me a new heart and put a new spirit within me.","Ezekiel 36:26","ezekiel-36-26"],["Lord, thank you that your love is everlasting and keeps drawing me back to you, in Jesus’ name.","Jeremiah 31:3","jeremiah-31-3"]]},{"k":"ask","title":"For asking big","re":"\\b(pray|prayer|miracle|breakthrough|favou?r|blessing)|\\bask god\\b|\\bneed help\\b","say":"Ask big. Here is what God and Jesus said about asking.","ids":["jeremiah-33-3","matthew-7-7","psalms-81-10","mark-11-24","john-14-14","john-16-24","1-kings-3-5","isaiah-65-24","matthew-17-20"],"pray":[["Father, I call to you today. Answer me and show me great and mighty things.","Jeremiah 33:3","jeremiah-33-3"],["Lord, I open my mouth wide. Fill it.","Psalm 81:10","psalms-81-10"],["Father, I ask, I seek and I knock. Let doors open to me.","Matthew 7:7","matthew-7-7"],["Lord, I believe that I receive what I ask for in prayer, in Jesus’ name.","Mark 11:24","mark-11-24"]]},{"k":"build","title":"For while you build","re":"\\b(build|dream|vision|goal|ambition|grind|hustle|launch|startup)|\\bstart(ing)?\\b|\\bbusiness\\b|\\bproject\\b|\\bbig plans?\\b","say":"You are building something. Here is what God said to builders.","ids":["habakkuk-2-2","haggai-2-4","isaiah-54-2","genesis-13-14","zechariah-4-6","zechariah-4-10","matthew-5-14","matthew-5-16","isaiah-60-22","john-9-4","luke-16-10","genesis-12-2"],"pray":[["Father, help me write the vision and make it plain, so that it can run.","Habakkuk 2:2–3","habakkuk-2-2"],["Lord, make me strong and help me work, because you are with me.","Haggai 2:4","haggai-2-4"],["Father, enlarge my tent, lengthen my cords and strengthen my stakes.","Isaiah 54:2–3","isaiah-54-2"],["Lord, let this be done not by might, nor by power, but by your Spirit, in Jesus’ name.","Zechariah 4:6","zechariah-4-6"]]}],"general":[["Father, thank you that you are with me. Strengthen me, help me and uphold me.","Isaiah 41:10","isaiah-41-10"],["Lord, your thoughts toward me are peace and not evil. Bring me to the expected end.","Jeremiah 29:11","jeremiah-29-11"],["Lord Jesus, I come to you as I am. Give me rest and your peace.","Matthew 11:28","matthew-11-28"],["Father, thank you that you are with me always, even to the end, in Jesus’ name.","Matthew 28:20","matthew-28-20"]]}</script>
+<script>
+(function () {
+  var D = JSON.parse(document.getElementById('data').textContent);
+  var W = D.words, F = D.feelings, GP = D.general;
+  var THEME = { fear: 'Fear not', rise: 'Arise', ask: 'Ask', build: 'Be strong, and work', peace: 'Be still', seen: 'Thou art mine' };
+  var byId = {}; W.forEach(function (w, i) { w.i = i; byId[w.id] = w; });
+  var el = function (id) { return document.getElementById(id); };
+
+  // ---------- reading order: today's word first, then the next days' words ----------
+  var now = new Date();
+  var day = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 864e5);
+  var ALL = []; for (var k = 0; k < W.length; k++) ALL.push(((day + k) * 37) % W.length);
+  var state = { list: ALL, pos: 0, mode: null };
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function lord(s) { return s.replace(/\bLORD\b/g, 'L<span class="sc">ORD</span>'); }
+  function passageHTML(w) {
+    var multi = w.v.length > 1;
+    return w.v.map(function (v) {
+      return (multi ? '<sup class="vn">' + v.n + '</sup>' : '') + v.r.map(function (r) {
+        var t = lord(esc(r[0]));
+        if (r[1] === 0) return '<span class="nar">' + t + '</span>';
+        if (r[1] === 1) return '<span class="sp">' + t + '</span>';
+        var m = t.match(/^(\s*)([\s\S]*?)(\s*)$/);
+        return m[1] + '<span class="sp"><b>' + m[2] + '</b></span>' + m[3];
+      }).join('');
+    }).join(' ');
+  }
+  function plain(w) { return w.v.map(function (v) { return v.r.map(function (r) { return r[0]; }).join(''); }).join(' '); }
+  function greeting() {
+    var h = new Date().getHours();
+    if (h >= 5 && h < 12) return 'Good morning, Otti.';
+    if (h >= 12 && h < 17) return 'Good afternoon, Otti.';
+    if (h >= 17 && h < 22) return 'Good evening, Otti.';
+    return 'Still up, Otti?';
+  }
+
+  // ---------- render one word ----------
+  function render(animate) {
+    var w = W[state.list[state.pos]];
+    var first = !state.mode && state.pos === 0;
+    el('greet').textContent = greeting() + (first ? ' Here is today’s word.' : state.mode ? ' These are for you right now.' : ' Keep going.');
+    var eb = '<span class="th">' + esc(THEME[w.th]) + '</span>';
+    if (state.mode) eb += '<span class="mode">' + esc(state.mode) + '<button type="button" id="allwords">All words</button></span>';
+    el('eyebrow').innerHTML = eb;
+    var h = el('headline');
+    h.innerHTML = lord(esc(w.hl));
+    h.setAttribute('data-len', w.hl.length <= 18 ? 'short' : w.hl.length <= 36 ? 'mid' : 'long');
+    el('foryou').textContent = w.p;
+    el('passage').innerHTML = passageHTML(w);
+    el('ref').textContent = w.ref;
+    el('who').textContent = w.who + ', ' + w.to;
+    el('gist').textContent = w.s;
+    el('story').open = false;
+    el('count').innerHTML = '<b>' + (state.pos + 1) + '</b> / ' + state.list.length;
+    el('back').disabled = state.pos === 0;
+    el('stage').scrollTop = 0;
+    if (animate) { var p = el('page'); p.classList.remove('swap'); void p.offsetWidth; p.classList.add('swap'); }
+    try { history.replaceState(null, '', '#' + w.id); } catch (e) {}
+  }
+  function go(step) {
+    var n = state.pos + step;
+    if (n < 0) return;
+    if (n >= state.list.length) {
+      if (state.mode) { toast('That’s all of them. Back to every word.'); setList(ALL, null, (ALL.indexOf(state.list[state.pos]) + 1) % ALL.length); return; }
+      n = 0;
+    }
+    state.pos = n; render(true);
+  }
+  function setList(list, mode, pos) { state.list = list; state.mode = mode; state.pos = pos || 0; render(true); }
+
+  // ---------- copy ----------
+  var tt;
+  function toast(msg) { var t = el('toast'); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(function () { t.hidden = true; }, 2000); }
+  function copyText(text, done) {
+    var fallback = function () {
+      var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      toast(ok ? done : 'Copy is blocked here. Press and hold the text to copy it.');
+    };
+    try { navigator.clipboard.writeText(text).then(function () { toast(done); }, fallback); } catch (e) { fallback(); }
+  }
+  el('copy').addEventListener('click', function () {
+    var w = W[state.list[state.pos]];
+    copyText('“' + plain(w) + '” ' + w.ref + ' (KJV)', 'Copied ' + w.ref);
+  });
+
+  // ---------- moving ----------
+  el('next').addEventListener('click', function () { go(1); });
+  el('back').addEventListener('click', function () { go(-1); });
+  el('eyebrow').addEventListener('click', function (e) {
+    if (e.target.id === 'allwords') setList(ALL, null, (ALL.indexOf(state.list[state.pos]) + 1) % ALL.length);
+  });
+  var sx = null, sy = 0;
+  el('stage').addEventListener('touchstart', function (e) {
+    if (e.target.closest('summary, button, a')) { sx = null; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  }, { passive: true });
+  el('stage').addEventListener('touchend', function (e) {
+    if (sx === null) return;
+    var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    sx = null;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
+  }, { passive: true });
+  document.addEventListener('keydown', function (e) {
+    if (!el('sheet').hidden) { if (e.key === 'Escape') closeSheet(); return; }
+    if (e.target.closest && e.target.closest('textarea, input')) return;
+    if (e.key === 'ArrowRight') go(1);
+    if (e.key === 'ArrowLeft') go(-1);
+  });
+  window.addEventListener('hashchange', function () {
+    var w = byId[location.hash.slice(1)];
+    if (w && w !== W[state.list[state.pos]]) setList(ALL, null, ALL.indexOf(w.i));
+  });
+
+  // ---------- talk to me ----------
+  var CRISIS = /\b(kill(ing)? my ?self|suicid|end (it all|my life)|want to die|wanna die|don'?t want to (live|be alive|be here)|better off dead|self[- ]?harm|hurt(ing)? my ?self|cut(ting)? my ?self|no reason to live|take my (own )?life)/i;
+  F.forEach(function (f) { f.rx = new RegExp(f.re, 'i'); });
+  var lastPicks = null;
+
+  function openSheet() { el('sheet').hidden = false; document.getElementById('app').setAttribute('aria-hidden', 'true'); setTimeout(function () { el('say').focus(); }, 30); }
+  function closeSheet() { el('sheet').hidden = true; document.getElementById('app').removeAttribute('aria-hidden'); el('talk').focus(); }
+  el('talk').addEventListener('click', openSheet);
+  el('close').addEventListener('click', closeSheet);
+
+  var FK = {}; F.forEach(function (f) { FK[f.k] = f; });
+  var NUM = { a: 'A', one: 'One', two: 'Two', three: 'Three', four: 'Four', five: 'Five', six: 'Six', seven: 'Seven', eight: 'Eight', nine: 'Nine', ten: 'Ten', several: 'Several', many: 'Many', few: 'A few', 'a few': 'A few' };
+  function clean(t) {
+    return ' ' + t.toLowerCase().replace(/[’‘`]/g, "'").replace(/…/g, ' ').replace(/(.)\1{2,}/g, '$1$1').replace(/\s+/g, ' ') + ' ';
+  }
+  // Say back what was understood, so the answer feels like it was listening.
+  function understand(t, keys) {
+    var lines = [];
+    var turned = /\b(was|were|been|used to be)\b.{0,30}\b(great|good|well|fine|amazing|better|flourishing|thriving|on top)\b|\bused to\b|\bnot like before\b|\bfell off\b/.test(t);
+    var m = t.match(/\b(\d+|a few|a|one|two|three|four|five|six|seven|eight|nine|ten|several|many|few)\s+(years?|yrs|months?|weeks?)\b/);
+    var dur = null;
+    if (m) {
+      var unit = m[2] === 'yrs' ? 'years' : m[2];
+      dur = (/^\d+$/.test(m[1]) ? m[1] : NUM[m[1]]) + ' ' + unit;
+      if (m[1] === '1' || m[1] === 'one' || m[1] === 'a') dur = (m[1] === '1' ? '1 ' : 'A ') + unit.replace(/s$/, '');
+    }
+    if (turned) lines.push('You were doing well, and now it feels like everything has turned. That drop hurts, but it does not mean you are finished.');
+    if (dur && keys.stuck) lines.push(dur + ' in the same place would wear anyone down. It makes sense that you are tired of it.');
+    else if (dur) lines.push(dur + ' is a long time to carry this.');
+    return lines;
+  }
+  function pickHTML(w) {
+    return '<button type="button" class="pick" data-open="' + w.id + '"><span class="pr">' + esc(w.ref) + ' · ' + esc(w.who) + '</span><span class="ph">' + lord(esc(w.hl)) + '</span><span class="pp">' + esc(w.p) + '</span></button>';
+  }
+  function botMsg(html, ids, mode) {
+    return '<div class="msg bot" data-ids="' + ids.join(',') + '" data-mode="' + esc(mode) + '">' + html + '</div>';
+  }
+  function prayHTML(groups) {
+    var many = groups.length > 1;
+    return '<div class="pray"><div class="pray-head"><h3>Prayer points</h3><button type="button" class="textbtn" data-copypray="1">Copy prayers</button></div>' +
+      groups.map(function (g) {
+        return '<div class="pgroup" data-title="' + esc(g.title) + '">' + (many ? '<p class="label">' + esc(g.title) + '</p>' : '') + '<ol>' +
+          g.pray.map(function (p) {
+            return '<li><span class="ptext">' + esc(p[0]) + '</span> ' + (p[2] ? '<button type="button" class="pref" data-open="' + p[2] + '">' + esc(p[1]) + '</button>' : '<span class="pref">' + esc(p[1]) + '</span>') + '</li>';
+          }).join('') + '</ol></div>';
+      }).join('') + '</div>';
+  }
+  var GENERAL = ['isaiah-41-10', 'jeremiah-29-11', 'matthew-11-28', 'isaiah-43-18', 'john-16-33', 'matthew-28-20'];
+
+  function reply(text) {
+    var thread = el('thread');
+    thread.insertAdjacentHTML('beforeend', '<div class="msg me"><p>' + esc(text) + '</p></div>');
+    var t = clean(text), out;
+    if (CRISIS.test(t)) {
+      var ids0 = ['psalms-91-15', 'matthew-11-28'];
+      out = botMsg('<p>Otti, I’m really glad you said that instead of keeping it in. What you are feeling matters more than any verse on this page, so please reach a real person right now.</p>' +
+        '<div class="help"><p>Call or text someone you trust and tell them exactly what you told me. If you might act on it, call the emergency line now.</p>' +
+        '<p>Nigeria emergency number: <strong>112</strong></p>' +
+        '<p>Free helplines in Nigeria and other countries are listed at <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a>.</p></div>' +
+        '<p>And when you are ready, these two are for you:</p><div class="picks">' + ids0.map(function (id) { return pickHTML(byId[id]); }).join('') + '</div>', ids0, 'For you');
+    } else {
+      var hits = F.filter(function (f) { return f.rx.test(t); });
+      var keys = {}; hits.forEach(function (f) { keys[f.k] = 1; });
+      var lines = understand(t, keys);
+      var seen = {}, sections = [], all = [];
+      hits.forEach(function (f) {
+        var ids = f.ids.filter(function (id) { return !seen[id]; });
+        ids.forEach(function (id) { seen[id] = 1; });
+        if (ids.length) sections.push({ title: f.title, say: f.say, ids: ids });
+      });
+      var also = [];
+      hits.forEach(function (f) {
+        (f.also || []).forEach(function (k) {
+          if (keys[k] || !FK[k]) return;
+          FK[k].ids.forEach(function (id) { if (!seen[id] && also.length < 6) { seen[id] = 1; also.push(id); } });
+        });
+      });
+      if (also.length) sections.push({ title: 'Also for you', say: 'A few more that fit where you are.', ids: also });
+      if (!sections.length) sections.push({ title: 'For any hard day', say: 'I couldn’t pick out one clear feeling in that, so here are words that fit almost any hard day. You can also tell me more, like “I feel stuck” or “I’m scared”.', ids: GENERAL });
+      sections.forEach(function (s) { all = all.concat(s.ids); });
+      var mode = hits.length === 1 ? hits[0].title : hits.length ? 'For where you are' : 'For you';
+      var html = '<p>Otti, I hear you.' + (lines.length ? ' ' + esc(lines.join(' ')) : '') + '</p>' +
+        '<p>I found ' + all.length + ' words for where you are. Tap any one to read it full screen, or go through them all.</p>' +
+        '<button type="button" class="btn readall" data-readall="1">Read all ' + all.length + ' one by one</button>' +
+        prayHTML(hits.length ? hits.map(function (f) { return { title: f.title, pray: f.pray }; }) : [{ title: 'For any hard day', pray: GP }]);
+      sections.forEach(function (s) {
+        html += '<div class="sec"><h3>' + esc(s.title) + '</h3><p class="say">' + esc(s.say) + '</p><div class="picks">' +
+          s.ids.map(function (id) { return pickHTML(byId[id]); }).join('') + '</div></div>';
+      });
+      html += '<p>Start with the first one. One word at a time is enough.</p>';
+      out = botMsg(html, all, mode);
+    }
+    thread.insertAdjacentHTML('beforeend', out);
+    thread.lastElementChild.previousElementSibling.scrollIntoView({ block: 'start', behavior: 'auto' });
+  }
+  function listFrom(msg) { return msg.getAttribute('data-ids').split(',').map(function (id) { return byId[id].i; }); }
+  el('thread').addEventListener('click', function (e) {
+    var o = e.target.closest('[data-open]'), msg = e.target.closest('.msg');
+    if (o && msg) {
+      var list = listFrom(msg), at = list.indexOf(byId[o.getAttribute('data-open')].i);
+      if (at < 0) { list = [byId[o.getAttribute('data-open')].i].concat(list); at = 0; }
+      setList(list, msg.getAttribute('data-mode') || 'For you', at);
+      closeSheet(); return;
+    }
+    var cp = e.target.closest('[data-copypray]');
+    if (cp) {
+      var text = 'Prayer points\n' + Array.prototype.map.call(cp.closest('.pray').querySelectorAll('.pgroup'), function (g) {
+        return '\n' + g.getAttribute('data-title') + '\n' + Array.prototype.map.call(g.querySelectorAll('li'), function (li, n) {
+          return (n + 1) + '. ' + li.querySelector('.ptext').textContent + ' (' + li.querySelector('.pref').textContent + ')';
+        }).join('\n');
+      }).join('\n') + '\n\nRed Letter, built by Otti';
+      copyText(text, 'Copied your prayer points'); return;
+    }
+    if (e.target.closest('[data-readall]') && msg) {
+      setList(listFrom(msg), msg.getAttribute('data-mode') || 'For you', 0);
+      closeSheet();
+    }
+  });
+  el('composer').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var t = el('say').value.trim(); if (!t) return;
+    el('say').value = ''; el('say').style.height = '';
+    reply(t);
+  });
+  el('say').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); el('composer').requestSubmit ? el('composer').requestSubmit() : el('send').click(); }
+  });
+  el('say').addEventListener('input', function () { this.style.height = ''; this.style.height = Math.min(this.scrollHeight + 3, 128) + 'px'; });
+  el('quick').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) reply(b.textContent); });
+
+  // ---------- start ----------
+  var fromHash = byId[(location.hash || '').slice(1)];
+  if (fromHash && fromHash.i !== ALL[0]) state.pos = ALL.indexOf(fromHash.i);
+  render(false);
+})();
+</script>
+<script>
+(function () {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('./sw.js').catch(function () {}); });
+  }
+  var deferred = null, btn = document.getElementById('install');
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; btn.hidden = false; });
+  btn.addEventListener('click', function () {
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.finally(function () { deferred = null; btn.hidden = true; });
+  });
+  window.addEventListener('appinstalled', function () { btn.hidden = true; });
+})();
+</script>
+
+</body>
+</html>
